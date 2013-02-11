@@ -1,0 +1,303 @@
+package net.zomis.custommap.view.android;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import net.zomis.custommap.CustomFacade;
+import net.zomis.custommap.model.GenericMapModel;
+import net.zomis.custommap.model.ITileModel;
+import net.zomis.custommap.view.ZomisTimer;
+import net.zomis.custommap.view.general.TileInterface;
+import net.zomis.custommap.view.general.ViewContainer;
+import net.zomis.custommap.view.general.ViewObject;
+
+import org.puremvc.java.interfaces.IFunction;
+import org.puremvc.java.interfaces.INotification;
+import org.puremvc.java.patterns.observer.Observer;
+
+import android.graphics.Rect;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
+import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+
+@JsonIgnoreType
+public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements IAndroidGameView, OnTouchListener, OnLongClickListener, IFunction {// extends ViewGroup, or View?
+	@JsonIgnore public transient NonLayoutingLayout boardView;
+	
+	protected GenericMapModel<TM> mapModel;
+	public GenericMapModel<TM> getMapModel() { return this.mapModel; }
+	public NonLayoutingLayout getLayout() { return this.boardView; }
+	
+	@JsonIgnore protected ZomisTimer _timer;
+	public void setTimer(ZomisTimer timer) { this._timer = timer; }
+	public ZomisTimer getTimer() { return this._timer; }
+	
+	public int spacing = 0;
+	protected int tileSize = 64;
+	@Deprecated
+	public int getTileSize() { return this.tileSize; }
+	public int getTileSizeReal() { return this.tileSize; }
+	public int getTileSizeScaled() {
+		return (int) (this.tileSize * this.mScaleFactor);
+	}
+	public int getMapWidth() { return this.mapModel.getMapWidth(); }
+	public int getMapHeight() { return this.mapModel.getMapHeight(); }
+	public int bgColor = 0xFF000000;
+	
+	@JsonIgnore public List<TileInterface<TM>> map;// test with non-transient
+	
+	protected float scaleFactorMax = 2.1f;
+	
+	// GameView: not sure if getMinScaleFactor is correct - but don't fix what isn't broken.
+	public float getMinScaleFactor() {
+		if (this.map == null) return 0.1f;
+		
+		int border = 20;
+		
+		int minWH = Math.min(this.boardView.getWidth(), this.boardView.getHeight());
+//		CustomFacade.getLog().d("GameView.getMinScaleFactor: minWH = " + minWH);
+//		CustomFacade.getLog().d("GameView.getMinScaleFactor: tileSize = " + this.getTileSizeReal());
+//		CustomFacade.getLog().d("GameView.getMinScaleFactor: scrollBounds = " + this.scrollBounds.toString());
+
+		if (this.map != null) {
+			int minTileWH = Math.min(this.getMapHeight(), this.getMapWidth());
+			float retur = (float) ((-border * 2.0 + minWH) / (this.getTileSizeReal() * minTileWH));
+//			CustomFacade.getLog().d("GameView.getMinScaleFactor: return " + retur);
+
+			return retur;
+		}
+		
+		CustomFacade.getLog().e("GameView.getMinScaleFactor: return WRONG " + 0.3);
+		return 0.3f;
+	}
+	
+	private GestureDetector gestureScanner;
+	private GestureListener gestureListener;
+	private ScaleGestureDetector mScaleDetector;
+	private float mScaleFactor = 1.f;
+
+	boolean inputEnabled = true;
+	public void setAllowInput(boolean allowInput) {
+		this.inputEnabled = allowInput;
+	}
+	public boolean isInputEnabled() {
+		return this.inputEnabled;
+	}
+	
+	public float getScaleFactor() {
+		return this.mScaleFactor;
+	}
+	
+	// TODO annotations to get models to add views for somehow?
+	public GameView(NonLayoutingLayout view, GenericMapModel<TM> model) {
+		this.mapModel = model;
+		this.boardView = view;
+	    
+	    if (view != null) boardView.setOnLongClickListener(this);
+	    
+	    // Fix map
+	    this.map = new ArrayList<TileInterface<TM>>();
+	    this.scrollBounds = new Rect(0, 0, 0, 0);
+	    if (model.hasMap()) {
+	    	Iterator<TM> it = model.iterator();
+	    	while (it.hasNext()) {
+	    		TM tm = it.next();
+	    		TileInterface<TM> tv = newTileView(this, tm);
+				map.add(tv);
+	    	}
+	    	
+	    	this.updateScrollBounds(true);
+	    }
+	    
+		// Setup detectors
+	    this.mScaleDetector = new ScaleGestureDetector(view.getContext(), new ScaleListener());
+	    this.gestureListener = new GestureListener(this);
+	    // send true to GestureDetector constructor to prevent two-finger scrolling (conflicts with zoom)
+	    this.gestureScanner = new GestureDetector(view.getContext(), this.gestureListener, view.getHandler(), true);
+	    view.setOnTouchListener(this);
+	    
+	    // Observe NonLayoutingLayout to be notified on when it calls onSizeChanged.
+	    org.puremvc.java.core.View.getInstance().registerObserver(CustomFacade.GAME_INIT, new Observer(this, this.boardView));
+	}
+
+	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+		@Override
+		public boolean onScale(ScaleGestureDetector detector) {
+			if (!inputEnabled) return false;
+			
+			mScaleFactor *= detector.getScaleFactor();
+			// Don't let the object get too small or too large.
+//			mScaleFactor = Math.max(GameView.this.scaleFactorMin, Math.min(mScaleFactor, GameView.this.scaleFactorMax));
+			mScaleFactor = Math.max(GameView.this.getMinScaleFactor(), Math.min(mScaleFactor, GameView.this.scaleFactorMax));
+//			CustomFacade.getLog().d(CustomFacade.LOG_TAG, "********** Scaling! " + mScaleFactor);
+//			CustomFacade.getInst().sendNotification(CustomFacade.USER_SCALE, mScaleFactor);
+			CustomFacade.getInst().sendNotification(CustomFacade.USER_SCALE, GameView.this);
+			
+//			GameView.this.tileSize = (int) (32 * mScaleFactor);
+//			GameView.this.repaint();
+			GameView.this.resize();
+			return true;
+		}
+	}
+	
+	public void updateScrollBounds(boolean reset) {
+        if (this.map != null) {
+        	TileInterface<TM> tv;
+        	tv = map.get(0);
+        	if (reset) this.scrollBounds = new Rect(tv.getX(), tv.getY(), tv.getX(), tv.getY());
+//        	CustomFacade.getLog().d("Up-Left   tv: " + tv.getX() + ", " + tv.getWidth() + ", " + tv.getY() + ", " + tv.getHeight() + " and " + tv.getWidth() * this.getScaleFactor());
+        	this.scrollBounds.union(tv.getX(), tv.getY());
+        	this.scrollBounds.union(tv.getX() + (int)(tv.getWidth() * this.getScaleFactor()), (int) (tv.getY() + tv.getHeight() * this.getScaleFactor()));
+//        	this.scrollBounds.union(tv.getX() + tv.getWidth(), tv.getY() + tv.getHeight());
+
+        	tv = map.get(map.size() - 1);
+        	this.scrollBounds.union(tv.getX(), tv.getY());
+        	this.scrollBounds.union(tv.getX() + (int)(tv.getWidth() * this.getScaleFactor()), (int) (tv.getY() + tv.getHeight() * this.getScaleFactor()));
+//        	CustomFacade.getLog().d("Low-Right tv: " + tv.getX() + ", " + tv.getWidth() + ", " + tv.getY() + ", " + tv.getHeight());
+        }
+        else {
+        	if (reset) this.scrollBounds = new Rect(0, 0, 0, 0);
+        }
+//        if (reset)
+//        	this.scrollBounds.inset(border, border);// make a little border around the map
+	}
+	
+	public void playSound(int resId) {
+		// use one MediaPlayer per resource, not one per each time it is played ? It might actually play twice at once
+		MediaPlayer mp = MediaPlayer.create(this.boardView.getContext(), resId);
+        mp.setOnCompletionListener(new OnCompletionListener() {
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
+        mp.start();
+	}
+	
+	public TileInterface<TM> newTileView(GameView<TM> view, TM model) {
+		return null;
+	}
+	
+	public boolean onLongClick(View v) {
+		Log.w("Zomis", "Method not overriden: GridView.onLongClick");
+		return false;
+	}
+	
+	/**
+	 * PerformClick variable is used to prevent clicking while scrolling 
+	 */
+	boolean performClick = false;
+	
+	private View lastView;
+	public View getLastTouchedView() { return this.lastView; }
+	
+	public boolean onTouch(View view, MotionEvent event) {
+//		CustomFacade.getLog().v("Zomis", "GameView: onTouch: " + event.toString());
+		this.lastView = view;// separating MapPaintable scrolling from layout scrolling.
+		gestureScanner.onTouchEvent(event);
+    	mScaleDetector.onTouchEvent(event);
+		return false;
+	}
+
+	public abstract void repaint();
+	public abstract void resize();
+	
+	public void addViewToGame(View image, boolean backGround) {
+		if (image == null) return;
+		if (boardView == null) return;
+		
+		if (backGround)
+			boardView.addView(image, 0);
+		else boardView.addView(image);
+	}
+	
+	protected Rect scrollBounds;
+	
+	public void scroll(float distanceX, float distanceY) {
+		if (!this.scrollEnabled) return;
+		
+		this.performClick = false;
+		
+		this.boardView.scrollBy((int)distanceX, (int)distanceY);	// use this ???
+//		v.requestLayout()						// maybe make this as a real layout sometime?
+//		v.requestRectangleOnScreen(rectangle)	// is this what I think it is? show a specific portion of the screen?
+
+		CustomFacade.getLog().v("ScrollBounds is: " + this.scrollBounds);
+		CustomFacade.getLog().v("BoardView Width and Height: " + this.boardView.getWidth() + ", " + this.boardView.getHeight());
+		int scrollX = this.boardView.getScrollX();
+		int scrollY = this.boardView.getScrollY();
+		CustomFacade.getLog().v("ScrollX and Y is before adjustment: " + scrollX + ", " + scrollY);
+
+		if (scrollX < scrollBounds.left) scrollX = scrollBounds.left;
+		if (scrollX > scrollBounds.right - this.boardView.getWidth()) scrollX = scrollBounds.right - this.boardView.getWidth(); // scroll as far right as possible
+		
+		if (scrollY < scrollBounds.top) scrollY = scrollBounds.top;
+		if (scrollY > scrollBounds.bottom - this.boardView.getHeight()) scrollY = scrollBounds.bottom - this.boardView.getHeight(); // scroll as far down as possible
+
+		CustomFacade.getLog().v("ScrollX and Y is after adjustment: " + scrollX + ", " + scrollY);
+		
+//		Tejpbit's centering code * scrollToX = scrollToY = (gameFunction.layout.getWidth() / 2)*(-1) + ((gameFunction.getSquareSize() * (gameFunction.MapSizeX )/2) ) + (gameFunction.getSquareSize()/2);
+
+		
+		this.boardView.scrollTo(scrollX, scrollY);
+
+//		Log.v("Zomis", String.format("Scroll is now %d, %d", scrollX, scrollY));
+	}
+	
+    public void addViewObject(ViewObject object) {
+    	if (object == null) throw new IllegalArgumentException("View object is null");// will this be caught anywhere ?
+    	if (!(object.getViewToAdd() instanceof View)) CustomFacade.getLog().e("Zomis", "GameView.addViewObject: View to add is invalid: " + object.toString() + " view to add is " + object.getViewToAdd());
+		if (boardView == null) throw new NullPointerException("boardView is null");
+		
+		if (boardView.indexOfChild((View) object.getViewToAdd()) == -1)
+			boardView.addView((View) object.getViewToAdd());
+		else CustomFacade.getLog().e("View already exists on GameView: " + object);
+    }
+    public void removeViewObject(ViewObject object) {
+    	if (object == null) throw new IllegalArgumentException("View object is null");
+    	if (!(object.getViewToAdd() instanceof View)) CustomFacade.getLog().e("Zomis", "GameView.removeViewObject: View to add is invalid: " + object.toString());
+		if (boardView == null) throw new NullPointerException("boardView is null");
+		if (boardView != null) 
+		
+		if (boardView.indexOfChild((View) object.getViewToAdd()) > -1)
+			boardView.removeView((View) object.getViewToAdd());
+		else CustomFacade.getLog().e("View does not exists on GameView: " + object);
+    }
+    
+	@Override
+	public void onNotification(INotification notification) {
+		if (notification.getName().contentEquals(CustomFacade.GAME_INIT)) {
+			if (notification.getBody() == this.boardView) {
+				this.mapModel.onGameLoaded();
+				this.resize();
+			}
+		}
+	}
+	
+	public void setZoom(float f) {
+		this.mScaleFactor = f;
+		this.resize();
+	}
+	public Rect getScrollBounds() {
+		return this.scrollBounds;
+	}
+	@Override
+	public void setPerformClick(boolean value) {
+		this.performClick = value;
+	}
+
+	@Override
+	public boolean getPerformClick() {
+		return this.performClick;
+	}
+
+}
