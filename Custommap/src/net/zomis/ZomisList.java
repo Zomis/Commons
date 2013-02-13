@@ -2,7 +2,6 @@ package net.zomis;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -62,26 +61,7 @@ public class ZomisList {
 		if (random == null) random = ZomisList.random;
 		return list.get(random.nextInt(list.size()));
 	}
-	@Deprecated
-	public static <E> E getRandomWithWeight(List<E> list, Random random, Weighter<E> weight) { // TODO: Fixa
-		if (list.isEmpty()) return null;
-		if (random == null) random = ZomisList.random;
-		
-		double sumWeight = 0;
-		for (E e : list) {
-			sumWeight += weight.getWeight(e);
-		}
-		
-		Collections.shuffle(list);
-		
-		return list.get(random.nextInt(list.size()));
-	}
-	@Deprecated
-	public static <E extends Weightable> E getRandomWithWeight(List<E> list, Random random) { // TODO: Fixa
-		if (list.isEmpty()) return null;
-		if (random == null) random = ZomisList.random;
-		return list.get(random.nextInt(list.size()));
-	}
+
 	
 	public static <E> E getRandom(E[] list) {
 		return getRandom(list, random);
