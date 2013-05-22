@@ -29,6 +29,7 @@ public class MapPaintable implements ViewObject {
 //				image.setOnTouchListener(this);
 //				image.setOnLongClickListener(this);
 			}
+			else throw new AssertionError("GameView layout is null");
 			
 			gameView.addViewObject(this);
 	//		gameView.addViewToGame(this.getViewToAdd(), true);
@@ -42,17 +43,7 @@ public class MapPaintable implements ViewObject {
 //		Log.i("Zomis", "setImageResourceByName " + drawableName);
 		this.image.setImageFromResourceName(drawableName);
 		return 0;
-/*			ContextWrapper cw = (ContextWrapper)this.view.boardView.getContext();
-			int resId = cw.getResources().getIdentifier(drawableName , "drawable", cw.getPackageName());
-			setImageResourceByInt(resId);*/
 	}
-/*	public void setImageClick(OnClickListener click) {
-		this.image.setOnClickListener(click);
-	}
-	public void setImageResourceByInt(int resId) {
-		image.setImageResource(resId);// view.images[i % view.images.length];
-	}*/
-	
 	public ISwingGameView getMap() {
 		return view;
 	}

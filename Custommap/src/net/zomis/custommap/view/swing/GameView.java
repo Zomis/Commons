@@ -72,7 +72,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
         		TM tv = it.next();
        			map.add(newTileView(this, tv));
        		}
-        	newTileView(this, this.getMapModel().posRandom());// workaround for strange Swing-bug, the last tile added is placed behind everything...
+        	newTileView(this, this.getMapModel().pos(0, 0));// workaround for strange Swing-bug, the last tile added is placed behind everything...
         }
 	}
 	

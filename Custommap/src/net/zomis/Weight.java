@@ -14,7 +14,7 @@ public class Weight {
 	private static Random	random = new Random();
 
 	@Deprecated
-	public static <E> E getRandomWithWeight(List<E> list, Random random, Weighter<E> weight) { // TODO: Fixa
+	public static <E> E getRandomWithWeight(List<E> list, Random random, Weighter<E> weight) { // TODO: Fixa Weight
 		if (list.isEmpty()) return null;
 		if (random == null) random = Weight.random;
 		
@@ -28,7 +28,7 @@ public class Weight {
 		return list.get(random.nextInt(list.size()));
 	}
 	@Deprecated
-	public static <E extends Weightable> E getRandomWithWeight(List<E> list, Random random) { // TODO: Fixa
+	public static <E extends Weightable> E getRandomWithWeight(List<E> list, Random random) { // TODO: Fixa Weight
 		if (list.isEmpty()) return null;
 		if (random == null) random = Weight.random ;
 		return list.get(random.nextInt(list.size()));

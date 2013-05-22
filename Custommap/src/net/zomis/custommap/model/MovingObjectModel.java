@@ -1,6 +1,6 @@
 package net.zomis.custommap.model;
 
-// TODO Implement MovingObjectModel for: Signalgame - Signals, LoE - Players, Vectorgame - Objects
+// TODO: Implement MovingObjectModel for: Signalgame - Signals, LoE - Players, Vectorgame - Objects
 public abstract class MovingObjectModel {
 	protected int x;
 	protected int y;

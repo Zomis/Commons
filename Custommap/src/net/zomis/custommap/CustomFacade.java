@@ -61,7 +61,7 @@ public abstract class CustomFacade extends Facade {
 	 */
 	public static final String USER_LONG_PRESS_PAINTABLE = "USER_LONG_PRESS_PAINTABLE";
 	public static final String MAP_CENTER = null;
-	public static final String	GAME_CHANGE	= "map_change";
+	public static final String GAME_CHANGE = "map_change";
 	
 	protected static ZomisLog logger;
 	
@@ -88,19 +88,13 @@ public abstract class CustomFacade extends Facade {
     public static boolean isInitialized() {
     	return instance != null;
     }
-    public static CustomFacade getInst()
-    {
-        if (instance == null) {
-        	throw new NullPointerException("CustomFacade not initialized");
-        }
-        return (CustomFacade) instance;
+    public static CustomFacade getInst() {
+        return instance;
     }
 
     @Override
-    protected void initializeController()
-    {
+    protected void initializeController() {
     	super.initializeController();
-//    	registerCommand(CustomFacade.USER_SCROLL, new ScrollCommand());
     }
     
 	public String getTag() {
@@ -123,13 +117,12 @@ public abstract class CustomFacade extends Facade {
     	this.timerClass = timerClass;
     }
     
-	public static <T> T objAs(Object object, Class<T> to) {
-		if (object == null) return null;
-		
-        if (to.isAssignableFrom(object.getClass())) {
-            return to.cast(object);
-        }
-        return null;
-	}
-    
+//	public static <T> T objAs(Object object, Class<T> to) {
+//		if (object == null) return null;
+//		
+//        if (to.isAssignableFrom(object.getClass())) {
+//            return to.cast(object);
+//        }
+//        return null;
+//	}
 }

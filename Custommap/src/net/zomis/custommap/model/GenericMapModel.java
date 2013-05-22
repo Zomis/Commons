@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 @JsonAutoDetect(getterVisibility = Visibility.NONE, fieldVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-public abstract class GenericMapModel<TM extends ITileModel<TM>> implements Iterable<TM> {
+public abstract class GenericMapModel<TM> implements Iterable<TM> {
 	public static final int AUTOPAINT = 2;// auto-updating
 	public static final int PAUSED = 1;// interaction possible but not auto-updating
 	@Deprecated
@@ -75,7 +75,7 @@ public abstract class GenericMapModel<TM extends ITileModel<TM>> implements Iter
 	
 	public boolean hasMap() { return this.map != null; }
 	
-public boolean initMap(int mapWidth, int mapHeight) {
+	public boolean initMap(int mapWidth, int mapHeight) {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         this.map = new ArrayList<List<TM>>(mapWidth);

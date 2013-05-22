@@ -14,7 +14,9 @@ public class ZomisUtils {
 	// Format: %1: %2 %3 %4 %7 %5 %1 %1. Where the %x is the parameter index in values.
 	// Throw IllegalArgumentException if values count not matching
 //	}
-	
+	public static double nanoToMilli(long nano) {
+		return nano / 1000000.0;
+	}
 	public static String format(Object... values) {
 		StringBuilder str = new StringBuilder();
 		for (Object obj : values) str.append(obj);
@@ -79,9 +81,10 @@ public class ZomisUtils {
 		return ret;
 	}
 	
-	public static String echo(String string) {
-		System.out.println(string);
-		return string;
+	public static String echo(Object obj) {
+		String str = String.valueOf(obj);
+		System.out.println(str);
+		return str;
 	}
 	public static String dechex(int decimal) {
 		return Integer.toString(decimal, 16);
@@ -159,5 +162,17 @@ public class ZomisUtils {
 			}
 		}
 	}
-	
+	public static double normalized(double value, double min, double range) {
+//		return ((value - min) / range - 0.5) * 2;
+		return ((value - min) / range);
+	}
+	public static String textAfter(String theString, String after) {
+		return ZomisUtils.substr(theString, theString.indexOf(after) + after.length());
+	}
+	public static String textBefore(String theString, String before) {
+		return ZomisUtils.substr(theString, 0, theString.indexOf(before));
+	}
+	public static String textBetween(String theString, String after, String before) {
+		return textBefore(textAfter(theString, after), before);
+	}
 }

@@ -98,7 +98,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		return this.mScaleFactor;
 	}
 	
-	// TODO annotations to get models to add views for somehow?
+	// TODO: annotations to get models to add views for somehow?
 	public GameView(NonLayoutingLayout view, GenericMapModel<TM> model) {
 		this.mapModel = model;
 		this.boardView = view;

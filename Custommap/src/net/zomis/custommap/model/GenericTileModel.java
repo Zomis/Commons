@@ -5,7 +5,8 @@ package net.zomis.custommap.model;
  * @author Zomis
  *
  */
-public abstract class GenericTileModel<TM extends ITileModel<TM>, MM extends GenericMapModel<TM>> implements ITileModel<TM> {
+public abstract class GenericTileModel<TM extends ITileModel<? extends TM>, MM extends GenericMapModel<? extends TM>> implements ITileModel<TM> {
+//public abstract class GenericTileModel<TM, MM> implements ITileModel<TM> {
 	protected int xpos;
 	protected int ypos;
 	protected MM map;

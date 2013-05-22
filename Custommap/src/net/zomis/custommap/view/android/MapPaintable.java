@@ -25,7 +25,7 @@ import android.view.View.OnTouchListener;
  */
 public class MapPaintable implements ViewObject, OnTouchListener, OnLongClickListener {// extends View, Drawable, or nothing?
 	protected transient MyImageView image;
-	// TODO try to avoid MapPaintable.size property? Use TileSize on GameView instead, when possible
+	// TODO: try to avoid MapPaintable.size property? Use TileSize on GameView instead, when possible
 	private transient int size;	// is this really needed as a property of MapPaintable ??
 
 	protected transient IAndroidGameView view;
