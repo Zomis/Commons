@@ -22,8 +22,7 @@ public class GestureListener extends SimpleOnGestureListener {
 	@Override
     public boolean onDoubleTap(MotionEvent e) {
 		if (!this.mapView.isInputEnabled()) return false;
-		
-		CustomFacade.getInst().sendNotification(CustomFacade.USER_DOUBLE_TAP, e);
+		CustomFacade.getInst().sendNotification(CustomFacade.USER_DOUBLE_TAP, new FlingScrollEvent(e, e, 0, 0, this.mapView));
     	return this.returnOnDoubleTap;
     }
 	@Override

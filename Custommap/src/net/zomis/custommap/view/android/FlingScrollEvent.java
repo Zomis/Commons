@@ -8,10 +8,6 @@ public class FlingScrollEvent {
 	public float velocityX;
 	public float velocityY;
 	public IAndroidGameView view;
-	@Deprecated
-	public FlingScrollEvent(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-		this(e1, e2, velocityX, velocityY, null);
-	}
 	public FlingScrollEvent(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY, IAndroidGameView gameView) {
 		this.e1 = e1;
 		this.e2 = e2;

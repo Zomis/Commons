@@ -316,7 +316,7 @@ public class DragController {
 	 * Call this from a drag source view.
 	 */
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		final int action = ev.getAction();
+		final int action = ev.getActionMasked();
 
 		if (action == MotionEvent.ACTION_DOWN) {
 			recordScreenSize();
@@ -370,7 +370,7 @@ public class DragController {
 			return false;
 		}
 
-		final int action = ev.getAction();
+		final int action = ev.getActionMasked();
 		final int screenX = clamp((int) ev.getRawX(), 0,
 				mDisplayMetrics.widthPixels);
 		final int screenY = clamp((int) ev.getRawY(), 0,

@@ -16,11 +16,8 @@ import org.puremvc.java.patterns.facade.Facade;
  *
  */
 public abstract class CustomFacade extends Facade {
-	/**
-	 * Sent on a {@link ZomisTimer} update.<br>
-	 * Context can differ, but should be a subclass of {@link MapModel}
-	 */
-    public static final String GAME_TIMER = "GAME_TIMER";
+	private String tag = CustomFacade.LOG_TAG;
+	
     /**
      * Sent when onSizeChanged is called for {@link NonLayoutingLayout}<br>
      * Sends {@link IGameView} as context.
@@ -30,6 +27,7 @@ public abstract class CustomFacade extends Facade {
     public static final String LOG_TAG = "Zomis";
     public static final String LOG_TAG_MVC = "PureMVC";
     
+    @Deprecated
 	public static final String USER_SCALE = "USER_SCALE";
 	
 	public static final String USER_DOUBLE_TAP = "USER_DOUBLE_TAP";
@@ -60,7 +58,7 @@ public abstract class CustomFacade extends Facade {
 	 * Sends the {@link ViewObject} that was pressed as context
 	 */
 	public static final String USER_LONG_PRESS_PAINTABLE = "USER_LONG_PRESS_PAINTABLE";
-	public static final String MAP_CENTER = null;
+	public static final String MAP_CENTER = "MAP_CENTER";
 	public static final String GAME_CHANGE = "map_change";
 	
 	protected static ZomisLog logger;
@@ -98,7 +96,7 @@ public abstract class CustomFacade extends Facade {
     }
     
 	public String getTag() {
-		return CustomFacade.LOG_TAG;
+		return this.tag;
 	}
 	
     public ZomisTimer createTimer(int delay, Runnable runnable) {
@@ -117,12 +115,15 @@ public abstract class CustomFacade extends Facade {
     	this.timerClass = timerClass;
     }
     
-//	public static <T> T objAs(Object object, Class<T> to) {
-//		if (object == null) return null;
-//		
-//        if (to.isAssignableFrom(object.getClass())) {
-//            return to.cast(object);
-//        }
-//        return null;
-//	}
+	public static <T> T objAs(Object object, Class<T> to) {
+		if (object == null) return null;
+		
+        if (to.isAssignableFrom(object.getClass())) {
+            return to.cast(object);
+        }
+        return null;
+	}
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
 }

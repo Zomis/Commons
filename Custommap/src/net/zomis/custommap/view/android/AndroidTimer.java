@@ -14,8 +14,13 @@ public class AndroidTimer extends ZomisTimer {
 	@JsonIgnore protected Handler _timer;
 	@JsonIgnore private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
-	        AndroidTimer.this.runnable.run();
-			_timer.postDelayed(this, AndroidTimer.this.delay); // this = Runnable
+			if (_timer == null) return;
+			if (getRepeats() != 0) {
+		        AndroidTimer.this.runnable.run();
+		        if (repeats > 0) --repeats;
+		        if (_timer != null && getRepeats() != 0) _timer.postDelayed(this, AndroidTimer.this.delay); // this = Runnable
+			}
+			else stop();
 		}
 	};
 
@@ -31,8 +36,8 @@ public class AndroidTimer extends ZomisTimer {
 
 	@Override
 	public void stop() {
-		if (_timer == null) _timer = new Handler();
-        _timer.removeCallbacks(mUpdateTimeTask);
+		if (_timer != null) _timer.removeCallbacks(mUpdateTimeTask);
+		_timer = null;
         this.running = false;
 	}
 

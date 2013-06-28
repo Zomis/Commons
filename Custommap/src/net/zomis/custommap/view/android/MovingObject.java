@@ -1,9 +1,7 @@
 package net.zomis.custommap.view.android;
 
-import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.model.MovingObjectModel;
 
-import org.puremvc.java.core.View;
 import org.puremvc.java.interfaces.IFunction;
 import org.puremvc.java.interfaces.INotification;
 import org.puremvc.java.interfaces.IObserver;
@@ -19,7 +17,7 @@ public class MovingObject extends Overlay implements IObserver, IFunction {
 	public MovingObject(IAndroidGameView g, MovingObjectModel model) {
 		super(g);
 		this.model = model;
-		View.getInstance().registerObserver(CustomFacade.GAME_TIMER, this);
+//		View.getInstance().registerObserver(CustomFacade.GAME_TIMER, this);
 	}
 	
 //	protected abstract ViewObject getMoveTarget();

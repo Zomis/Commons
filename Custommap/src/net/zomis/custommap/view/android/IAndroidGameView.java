@@ -4,6 +4,7 @@ import net.zomis.custommap.view.IGameView;
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 public interface IAndroidGameView extends IGameView {
 	void setPerformClick(boolean value);
@@ -11,7 +12,7 @@ public interface IAndroidGameView extends IGameView {
 	
 	boolean onLongClick(View v);
 	Rect getScrollBounds();
-	NonLayoutingLayout getLayout();
+	ViewGroup getLayout();
 	void addViewToGame(View image, boolean backGround);
 	View getLastTouchedView();
 	boolean onTouch(View view, MotionEvent event);

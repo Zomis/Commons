@@ -103,13 +103,6 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 			boardView.add((JComponent) image, 0);
 		else boardView.add((JComponent) image);
 	}
-	/**
-	 * Called from NonLayoutingLayout, calls mapModel's onGameLoaded
-	 * Should be replaced with a sendNotification call to the Facade.
-	 */
-	protected void onLoadGame() {
-		this.mapModel.onGameLoaded();
-	}
 	public void scroll(float distanceX, float distanceY) {
 		CustomFacade.getLog().v("Zomis", String.format("Scroll %f, %f", distanceX, distanceY));
 		

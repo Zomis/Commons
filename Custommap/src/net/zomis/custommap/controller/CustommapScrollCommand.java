@@ -20,6 +20,7 @@ import android.widget.ImageView;
  * @author Zomis
  *
  */
+@Deprecated
 public class CustommapScrollCommand extends SimpleCommand implements ICommand {
 	public void execute(INotification notification) {
     	FlingScrollEvent fse = (FlingScrollEvent) notification.getBody();

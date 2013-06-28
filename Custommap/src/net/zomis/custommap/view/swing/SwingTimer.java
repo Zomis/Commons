@@ -1,9 +1,9 @@
 package net.zomis.custommap.view.swing;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.view.ZomisTimer;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,27 +13,18 @@ public class SwingTimer extends ZomisTimer {
 		super(delay, runnable);
 	}
 
-	@JsonIgnore protected Timer _timer;
-	@JsonIgnore private TimerTask mUpdateTimeTask = new TimerTask() {
-		@Override
-		public void run() {
-	        SwingTimer.this.runnable.run();
-			_timer.schedule(this, SwingTimer.this.delay);
-		}
-	};
+	@JsonIgnore protected ScheduledExecutorService _timer;
 
 	@Override
 	public void start() {
-		if (this._timer == null) this._timer = new Timer();
-		this._timer.schedule(mUpdateTimeTask, this.delay);
+		if (this._timer == null) this._timer = Executors.newSingleThreadScheduledExecutor();
+		this._timer.scheduleAtFixedRate(this.runnable, this.delay, this.delay, TimeUnit.MILLISECONDS);
         this.running = true;
-        CustomFacade.getLog().i("Zomis", "timerStart!");
 	}
 
 	@Override
 	public void stop() {
-		if (this._timer == null) this._timer = new Timer();
-		
+		if (this._timer != null) this._timer.shutdownNow();
         this.running = false;
 	}
 

@@ -4,6 +4,7 @@ import org.puremvc.java.interfaces.IFunction;
 import org.puremvc.java.interfaces.INotification;
 import org.puremvc.java.patterns.observer.Observer;
 
+@Deprecated
 public abstract class ContextObserver extends Observer {
 	public ContextObserver(IFunction notify, Object context) {
 		super(notify, context);

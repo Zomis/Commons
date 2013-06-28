@@ -163,6 +163,7 @@ public class ZomisUtils {
 		}
 	}
 	public static double normalized(double value, double min, double range) {
+		if (range == 0.0) return 0;
 //		return ((value - min) / range - 0.5) * 2;
 		return ((value - min) / range);
 	}

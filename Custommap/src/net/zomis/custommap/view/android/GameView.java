@@ -7,7 +7,6 @@ import java.util.List;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.model.GenericMapModel;
 import net.zomis.custommap.model.ITileModel;
-import net.zomis.custommap.view.ZomisTimer;
 import net.zomis.custommap.view.general.TileInterface;
 import net.zomis.custommap.view.general.ViewContainer;
 import net.zomis.custommap.view.general.ViewObject;
@@ -26,26 +25,21 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 
 @JsonIgnoreType
 public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements IAndroidGameView, OnTouchListener, OnLongClickListener, IFunction {// extends ViewGroup, or View?
-	@JsonIgnore public transient NonLayoutingLayout boardView;
+	@JsonIgnore public transient ViewGroup boardView;
 	
 	protected GenericMapModel<TM> mapModel;
 	public GenericMapModel<TM> getMapModel() { return this.mapModel; }
-	public NonLayoutingLayout getLayout() { return this.boardView; }
-	
-	@JsonIgnore protected ZomisTimer _timer;
-	public void setTimer(ZomisTimer timer) { this._timer = timer; }
-	public ZomisTimer getTimer() { return this._timer; }
+	public ViewGroup getLayout() { return this.boardView; }
 	
 	public int spacing = 0;
 	protected int tileSize = 64;
-	@Deprecated
-	public int getTileSize() { return this.tileSize; }
 	public int getTileSizeReal() { return this.tileSize; }
 	public int getTileSizeScaled() {
 		return (int) (this.tileSize * this.mScaleFactor);
@@ -84,7 +78,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	private GestureDetector gestureScanner;
 	private GestureListener gestureListener;
 	private ScaleGestureDetector mScaleDetector;
-	private float mScaleFactor = 1.f;
+	private float mScaleFactor = 1.0f;
 
 	boolean inputEnabled = true;
 	public void setAllowInput(boolean allowInput) {
@@ -98,8 +92,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		return this.mScaleFactor;
 	}
 	
-	// TODO: annotations to get models to add views for somehow?
-	public GameView(NonLayoutingLayout view, GenericMapModel<TM> model) {
+	public GameView(ViewGroup view, GenericMapModel<TM> model) {
 		this.mapModel = model;
 		this.boardView = view;
 	    
@@ -120,7 +113,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	    }
 	    
 		// Setup detectors
-	    this.mScaleDetector = new ScaleGestureDetector(view.getContext(), new ScaleListener());
+//	    this.mScaleDetector = new ScaleGestureDetector(view.getContext(), new ScaleListener());
 	    this.gestureListener = new GestureListener(this);
 	    // send true to GestureDetector constructor to prevent two-finger scrolling (conflicts with zoom)
 	    this.gestureScanner = new GestureDetector(view.getContext(), this.gestureListener, view.getHandler(), true);
@@ -128,19 +121,21 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	    
 	    // Observe NonLayoutingLayout to be notified on when it calls onSizeChanged.
 	    org.puremvc.java.core.View.getInstance().registerObserver(CustomFacade.GAME_INIT, new Observer(this, this.boardView));
+	    view.setTag(this);
+//		view.requestLayout();
 	}
 
 	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 		@Override
 		public boolean onScale(ScaleGestureDetector detector) {
 			if (!inputEnabled) return false;
-			
 			mScaleFactor *= detector.getScaleFactor();
 			// Don't let the object get too small or too large.
 //			mScaleFactor = Math.max(GameView.this.scaleFactorMin, Math.min(mScaleFactor, GameView.this.scaleFactorMax));
 			mScaleFactor = Math.max(GameView.this.getMinScaleFactor(), Math.min(mScaleFactor, GameView.this.scaleFactorMax));
 //			CustomFacade.getLog().d(CustomFacade.LOG_TAG, "********** Scaling! " + mScaleFactor);
-//			CustomFacade.getInst().sendNotification(CustomFacade.USER_SCALE, mScaleFactor);
+			CustomFacade.getLog().d("Current is at " + detector.getCurrentSpan() + ", previous " + detector.getPreviousSpan());
+			CustomFacade.getLog().d("Focus is at " + detector.getFocusX() + ", " + detector.getFocusY());
 			CustomFacade.getInst().sendNotification(CustomFacade.USER_SCALE, GameView.this);
 			
 //			GameView.this.tileSize = (int) (32 * mScaleFactor);
@@ -149,7 +144,6 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 			return true;
 		}
 	}
-	
 	public void updateScrollBounds(boolean reset) {
         if (this.map != null) {
         	TileInterface<TM> tv;
@@ -204,7 +198,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 //		CustomFacade.getLog().v("Zomis", "GameView: onTouch: " + event.toString());
 		this.lastView = view;// separating MapPaintable scrolling from layout scrolling.
 		gestureScanner.onTouchEvent(event);
-    	mScaleDetector.onTouchEvent(event);
+    	if (mScaleDetector != null) mScaleDetector.onTouchEvent(event);
 		return false;
 	}
 
@@ -222,6 +216,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	
 	protected Rect scrollBounds;
 	
+	@Deprecated
 	public void scroll(float distanceX, float distanceY) {
 		if (!this.scrollEnabled) return;
 		
@@ -263,7 +258,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		else CustomFacade.getLog().e("View already exists on GameView: " + object);
     }
     public void removeViewObject(ViewObject object) {
-    	if (object == null) throw new IllegalArgumentException("View object is null");
+    	if (object == null) return; // throw new IllegalArgumentException("View object is null");
     	if (!(object.getViewToAdd() instanceof View)) CustomFacade.getLog().e("Zomis", "GameView.removeViewObject: View to add is invalid: " + object.toString());
 		if (boardView == null) throw new NullPointerException("boardView is null");
 		if (boardView != null) 
@@ -277,7 +272,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	public void onNotification(INotification notification) {
 		if (notification.getName().contentEquals(CustomFacade.GAME_INIT)) {
 			if (notification.getBody() == this.boardView) {
-				this.mapModel.onGameLoaded();
+				CustomFacade.getLog().i("Game init");
 				this.resize();
 			}
 		}

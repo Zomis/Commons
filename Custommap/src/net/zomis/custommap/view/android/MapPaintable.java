@@ -87,7 +87,7 @@ public class MapPaintable implements ViewObject, OnTouchListener, OnLongClickLis
 		return this.size;
 	}
     
-	public final boolean onLongClick(View v) {
+	public boolean onLongClick(View v) {
 		Log.d("Zomis", "MapPaintable onLongClick " + this + " @ " + MapPaintable.this.x + ", " + MapPaintable.this.y);
 		CustomFacade.getInst().sendNotification(CustomFacade.USER_LONG_PRESS_PAINTABLE, this);
 		return false;
@@ -96,9 +96,8 @@ public class MapPaintable implements ViewObject, OnTouchListener, OnLongClickLis
 	public boolean onTouch(View view, MotionEvent event) {
 //		event.setLocation(event.x, y);
 		//Log.v("Zomis", "MapPaintable onTouch " + this.toString() + "; " + event.toString());
-		if (event.getAction() == MotionEvent.ACTION_DOWN)
+		if (event.getActionMasked() == MotionEvent.ACTION_DOWN)
 			this.getMap().setPerformClick(true);
-		
 		this.getMap().onTouch(view, event);
 		return false;// what happens if true is returned here instead? Tejpbit's experience is that it will not be clickable
 	}
