@@ -13,17 +13,13 @@ import net.zomis.custommap.model.ITileModel;
 import net.zomis.custommap.view.general.TileInterface;
 import net.zomis.custommap.view.general.ViewContainer;
 import net.zomis.custommap.view.general.ViewObject;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
 /**
  * Should this class extend a PureMVC Observer somehow?
  * @author Zomis
  *
  */
-@JsonIgnoreType
 public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements ISwingGameView {// extends ViewGroup, or View?
-	@JsonIgnore public transient JComponent boardView;
+	public transient JComponent boardView;
 	
 	protected GenericMapModel<TM> mapModel;
 	public GenericMapModel<TM> getMapModel() { return this.mapModel; }
@@ -40,7 +36,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	public int getMapHeight() { return this.mapModel.getMapHeight(); }
 	public int bgColor = 0xFF000000;
 	
-	@JsonIgnore public List<TileInterface<TM>> map;// test with non-transient
+	public List<TileInterface<TM>> map;// test with non-transient
 
 	@Deprecated
 	public void reinitTiles() {

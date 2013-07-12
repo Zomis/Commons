@@ -1,6 +1,7 @@
 package net.zomis.custommap.view.android;
 
 import net.zomis.custommap.CustomFacade;
+import net.zomis.custommap.view.CustommapLayoutReadyEvent;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
@@ -46,8 +47,11 @@ public class NonLayoutingLayout extends ViewGroup {
     @Override
     protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
 //    	CustomFacade.getLog().i(String.format("Changed size: %s. Old = %d x %d. New = %d x %d", this, oldWidth, oldHeight, width, height));
-    	
-        CustomFacade.getInst().sendNotification(CustomFacade.GAME_INIT, this);// also sends it as a command
+        if (this.getTag() instanceof GameView<?>) {
+        	GameView<?> gv = (GameView<?>) this.getTag();
+        	gv.resize();
+        }
+        CustomFacade.getGlobalEvents().executeEvent(new CustommapLayoutReadyEvent(this));
         
         if (this.nextScrollX >= 0) {
         	((ViewGroup) this.getParent()).scrollTo((int)this.nextScrollX, (int)this.nextScrollY);
@@ -55,5 +59,9 @@ public class NonLayoutingLayout extends ViewGroup {
         	this.nextScrollY = -1;
         }
         
+        
     }
+	public int getScroller() {
+		return 0;
+	}
 }

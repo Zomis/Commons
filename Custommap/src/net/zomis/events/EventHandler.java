@@ -22,6 +22,13 @@ public class EventHandler {
 		return annotation;
 	}
 
+	public Method getMethod() {
+		return method;
+	}
+	public EventListener getListener() {
+		return listener;
+	}
+	
 	public void execute(BaseEvent event) {
 		try {
 			method.invoke(listener, event);

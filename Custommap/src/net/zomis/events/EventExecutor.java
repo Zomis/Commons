@@ -11,12 +11,16 @@ import java.util.Set;
 
 import net.zomis.custommap.CustomFacade;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
 
 public class EventExecutor {
-	private static final Logger logger = LoggerFactory.getLogger("Custommap");
+	private static final org.apache.log4j.Logger logger = LogManager.getLogger("Zomis");
 	private Map<Class<? extends BaseEvent>, Collection<EventHandler>> bindings;
+	
+	private boolean debug = false;
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
 	
 	public EventExecutor() {
 		this.bindings = new HashMap<Class<? extends BaseEvent>, Collection<EventHandler>>();
@@ -38,7 +42,10 @@ public class EventExecutor {
 	}
 	
 	public BaseEvent executeEvent(BaseEvent event) {
-//		logger.info("Execute Event: " + event.getClass().getSimpleName());
+		if (this.debug) {
+			logger.info("Execute Event: " + event.getClass().getSimpleName());
+			CustomFacade.getLog().i("Execute Event: " + event.getClass().getSimpleName());
+		}
 		if (this.bindings == null) return event;
 		
 		Collection<EventHandler> handlers = null;
@@ -46,7 +53,10 @@ public class EventExecutor {
 		handlers = this.bindings.get(event.getClass());
 		if (handlers == null) return event;
 		
-//		logger.info("Events has " + handlers.size() + " handlers.");
+		if (this.debug) {
+			logger.info("Events has " + handlers.size() + " handlers.");
+			CustomFacade.getLog().i("Execute Event: " + event.getClass().getSimpleName());
+		}
 		for (EventHandler handler : handlers) {
 			if (handler == null) continue; // should not happen, but you never know...
 			
@@ -109,5 +119,15 @@ public class EventExecutor {
 
 	public void clearListeners() {
 		this.bindings.clear();
+	}
+
+	public void removeListener(EventListener listener) {
+		CustomFacade.getLog().w("// TODO: Fixa. Remove listener.");
+	}
+	public Map<Class<? extends BaseEvent>, Collection<EventHandler>> getBindings() {
+		return new HashMap<Class<? extends BaseEvent>, Collection<EventHandler>>(bindings);
+	}
+	public Set<EventListener> getRegisteredListeners() {
+		return new HashSet<EventListener>(registeredListeners);
 	}
 }

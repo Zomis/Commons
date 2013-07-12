@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.model.ITileModel;
 import net.zomis.custommap.view.general.TileInterface;
+import net.zomis.custommap.view.swing.events.CustommapSwingTileClick;
 
 /**
  * common for Pentacolor, Minesweeper Flags Extreme, Signalgame (and more?)
@@ -46,15 +47,8 @@ public abstract class TileView<TM extends ITileModel<TM>> extends MapPaintable i
 			
 			@Override
 			public void mouseClicked(MouseEvent event) {
-				String modifiers = "";
-				if (event.isControlDown()) modifiers += "CTRL;";
-				if (event.isAltDown()) modifiers += "ALT;";
-				if (event.isShiftDown()) modifiers += "SHIFT;";
-				
-				CustomFacade.getInst().sendNotification(CustomFacade.USER_CLICK_TILE, TileView.this, modifiers);
-				
-//				CustomFacade.getLog().i("Zomis", "Click tile: " + TileView.this.getModel().toString());
-//				CustomFacade.getLog().d("Zomis", String.format("Click details: %d, %d", TileView.this.y, TileView.this.getHeight()));
+				CustomFacade.getLog().i("Execute click event");
+				CustomFacade.getGlobalEvents().executeEvent(new CustommapSwingTileClick(TileView.this, event));
 			}
 		});
 	}

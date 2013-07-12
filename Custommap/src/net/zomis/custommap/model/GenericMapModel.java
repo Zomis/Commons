@@ -5,27 +5,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * 
  * @author Zomis
  *
  */
-@JsonAutoDetect(getterVisibility = Visibility.NONE, fieldVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 public abstract class GenericMapModel<TM> implements Iterable<TM> {
-	@JsonProperty protected long _moveDelay = 100;
-	
-	@JsonIgnore protected List<List<TM>> map;
-	@JsonIgnore protected int mapHeight = 5;
-	@JsonIgnore protected int mapWidth = 5;
+	protected List<List<TM>> map;
+	protected int mapHeight = 5;
+	protected int mapWidth = 5;
 	
 	public int getMapHeight() { return this.mapHeight; }
 	
-	@JsonIgnore public int getMapTotalSize() {
+	public int getMapTotalSize() {
 		return this.getMapWidth() * this.getMapHeight();
 	}
 	
@@ -65,12 +57,19 @@ public abstract class GenericMapModel<TM> implements Iterable<TM> {
 		if (ypos >= mapHeight) return null;
 		return map.get(xpos).get(ypos);
 	}
-	@JsonIgnore
 	private static Random random = new Random();
 	
 	public TM posRandom() {
 		int x = random.nextInt(this.mapWidth);
 		int y = random.nextInt(this.mapHeight);
 		return pos(x, y);
+	}
+
+	public void javaGarbage() {
+		if (this.map != null) {
+			for (List<?> list : this.map) list.clear();
+			this.map.clear();
+			this.map = null;
+		}
 	}
 }

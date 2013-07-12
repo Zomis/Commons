@@ -29,8 +29,6 @@ public class SwingLog extends ZomisLog {
 	}
 
 	public void Log(Level type, String tag, String str) {
-//		Logger log = Logger.getLogger(tag);
-		
 		if (str.isEmpty())
 			System.out.println(type + " ");
 		else System.out.println(type + " " + String.format("[%s] %s", Thread.currentThread().getName() + ": " + tag, str));

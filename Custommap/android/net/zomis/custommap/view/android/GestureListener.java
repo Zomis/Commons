@@ -1,6 +1,10 @@
 package net.zomis.custommap.view.android;
 
 import net.zomis.custommap.CustomFacade;
+import net.zomis.custommap.view.android.events.AndroidDoubleTapEvent;
+import net.zomis.custommap.view.android.events.AndroidFlingEvent;
+import net.zomis.custommap.view.android.events.AndroidScrollEvent;
+import net.zomis.custommap.view.android.events.CustommapLongPressMapEvent;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 
@@ -22,23 +26,23 @@ public class GestureListener extends SimpleOnGestureListener {
 	@Override
     public boolean onDoubleTap(MotionEvent e) {
 		if (!this.mapView.isInputEnabled()) return false;
-		CustomFacade.getInst().sendNotification(CustomFacade.USER_DOUBLE_TAP, new FlingScrollEvent(e, e, 0, 0, this.mapView));
+		
+		CustomFacade.getGlobalEvents().executeEvent(new AndroidDoubleTapEvent(e, this.mapView));
+//		CustomFacade.getInst().sendNotification(CustomFacade.USER_DOUBLE_TAP, new FlingScrollEvent(e, e, 0, 0, this.mapView));
     	return this.returnOnDoubleTap;
     }
 	@Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 		if (!this.mapView.isInputEnabled()) return false;
 		
-		CustomFacade.getInst().sendNotification(CustomFacade.USER_FLING, new FlingScrollEvent(e1, e2, velocityX, velocityY, this.mapView));
+		CustomFacade.getGlobalEvents().executeEvent(new AndroidFlingEvent(e1, e2, velocityX, velocityY, this.mapView));
+//		CustomFacade.getInst().sendNotification(CustomFacade.USER_FLING, new FlingScrollEvent(e1, e2, velocityX, velocityY, this.mapView));
     	return this.returnOnFling;
     }
 	@Override
     public void onLongPress(MotionEvent e) {
 		if (!this.mapView.isInputEnabled()) return;
-		
-		CustomFacade.getLog().d("GestureListener.onLongPress");
-//		CustomFacade.getInst().sendNotification(CustomFacade.USER_LONG_PRESS, e);
-		CustomFacade.getInst().sendNotification(CustomFacade.USER_LONG_PRESS_MAP, new FlingScrollEvent(e, e, 0, 0, this.mapView));
+		CustomFacade.getGlobalEvents().executeEvent(new CustommapLongPressMapEvent(e, this.mapView));
     }
 	
 	@Override
@@ -64,7 +68,8 @@ public class GestureListener extends SimpleOnGestureListener {
 			return false;
 		}
 		
-		CustomFacade.getInst().sendNotification(CustomFacade.USER_SCROLL, new FlingScrollEvent(e1, e2, distanceX, distanceY, this.mapView));
+		CustomFacade.getGlobalEvents().executeEvent(new AndroidScrollEvent(e1, e2, distanceX, distanceY, this.mapView));
+//		CustomFacade.getInst().sendNotification(CustomFacade.USER_SCROLL, new FlingScrollEvent(e1, e2, distanceX, distanceY, this.mapView));
 		
     	return this.returnOnScroll;
     }
@@ -72,7 +77,7 @@ public class GestureListener extends SimpleOnGestureListener {
 	public boolean onDown(MotionEvent e) {
 		if (!this.mapView.isInputEnabled()) return false;
 		
-		CustomFacade.getInst().sendNotification(CustomFacade.USER_TOUCH_DOWN, e);
+//		CustomFacade.getInst().sendNotification(CustomFacade.USER_TOUCH_DOWN, e);
 	    return this.returnOnDown;
 	}
 

@@ -4,15 +4,13 @@ import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.view.ZomisTimer;
 import android.os.Handler;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class AndroidTimer extends ZomisTimer {
 	public AndroidTimer(Integer delay, Runnable runnable) {
 		super(delay, runnable);
 	}
 
-	@JsonIgnore protected Handler _timer;
-	@JsonIgnore private Runnable mUpdateTimeTask = new Runnable() {
+	protected Handler _timer;
+	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
 			if (_timer == null) return;
 			if (getRepeats() != 0) {

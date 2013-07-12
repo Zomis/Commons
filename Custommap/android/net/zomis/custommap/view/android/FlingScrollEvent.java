@@ -2,6 +2,7 @@ package net.zomis.custommap.view.android;
 
 import android.view.MotionEvent;
 
+@Deprecated
 public class FlingScrollEvent {
 	public MotionEvent e1;
 	public MotionEvent e2;

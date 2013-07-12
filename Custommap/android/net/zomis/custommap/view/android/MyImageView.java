@@ -6,9 +6,6 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-
 /**
  * An ImageView that takes care of it's own drawing using a custom draw function.
  * 
@@ -17,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
  * @see ViewObject
  * 
  */
-@JsonAutoDetect(getterVisibility=Visibility.NONE, fieldVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE)
 public class MyImageView extends ImageView implements ViewObject {
 	public interface ImageDraw {
 		void onDraw(MyImageView myImageView, Canvas canvas);

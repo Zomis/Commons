@@ -6,14 +6,12 @@ import java.util.concurrent.TimeUnit;
 
 import net.zomis.custommap.view.ZomisTimer;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class SwingTimer extends ZomisTimer {
 	public SwingTimer(Integer delay, Runnable runnable) {
 		super(delay, runnable);
 	}
 
-	@JsonIgnore protected ScheduledExecutorService _timer;
+	protected ScheduledExecutorService _timer;
 
 	@Override
 	public void start() {

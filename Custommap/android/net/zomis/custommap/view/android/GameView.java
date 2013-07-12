@@ -10,11 +10,6 @@ import net.zomis.custommap.model.ITileModel;
 import net.zomis.custommap.view.general.TileInterface;
 import net.zomis.custommap.view.general.ViewContainer;
 import net.zomis.custommap.view.general.ViewObject;
-
-import org.puremvc.java.interfaces.IFunction;
-import org.puremvc.java.interfaces.INotification;
-import org.puremvc.java.patterns.observer.Observer;
-
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -27,12 +22,8 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
-
-@JsonIgnoreType
-public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements IAndroidGameView, OnTouchListener, OnLongClickListener, IFunction {// extends ViewGroup, or View?
-	@JsonIgnore public transient ViewGroup boardView;
+public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements IAndroidGameView, OnTouchListener, OnLongClickListener {
+	public transient ViewGroup boardView;
 	
 	protected GenericMapModel<TM> mapModel;
 	public GenericMapModel<TM> getMapModel() { return this.mapModel; }
@@ -48,15 +39,15 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	public int getMapHeight() { return this.mapModel.getMapHeight(); }
 	public int bgColor = 0xFF000000;
 	
-	@JsonIgnore public List<TileInterface<TM>> map;// test with non-transient
+	public List<TileInterface<TM>> map;// test with non-transient
 	
 	protected float scaleFactorMax = 2.1f;
+	
+	protected int border = 20;
 	
 	// GameView: not sure if getMinScaleFactor is correct - but don't fix what isn't broken.
 	public float getMinScaleFactor() {
 		if (this.map == null) return 0.1f;
-		
-		int border = 20;
 		
 		int minWH = Math.min(this.boardView.getWidth(), this.boardView.getHeight());
 //		CustomFacade.getLog().d("GameView.getMinScaleFactor: minWH = " + minWH);
@@ -120,12 +111,11 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	    view.setOnTouchListener(this);
 	    
 	    // Observe NonLayoutingLayout to be notified on when it calls onSizeChanged.
-	    org.puremvc.java.core.View.getInstance().registerObserver(CustomFacade.GAME_INIT, new Observer(this, this.boardView));
 	    view.setTag(this);
 //		view.requestLayout();
 	}
 
-	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+/*	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 		@Override
 		public boolean onScale(ScaleGestureDetector detector) {
 			if (!inputEnabled) return false;
@@ -143,7 +133,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 			GameView.this.resize();
 			return true;
 		}
-	}
+	}*/
 	public void updateScrollBounds(boolean reset) {
         if (this.map != null) {
         	TileInterface<TM> tv;
@@ -268,16 +258,6 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		else CustomFacade.getLog().e("View does not exists on GameView: " + object);
     }
     
-	@Override
-	public void onNotification(INotification notification) {
-		if (notification.getName().contentEquals(CustomFacade.GAME_INIT)) {
-			if (notification.getBody() == this.boardView) {
-				CustomFacade.getLog().i("Game init");
-				this.resize();
-			}
-		}
-	}
-	
 	public void setZoom(float f) {
 		this.mScaleFactor = f;
 		this.resize();

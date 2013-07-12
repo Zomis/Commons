@@ -2,6 +2,7 @@ package net.zomis.custommap.view.android;
 
 import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.model.ITileModel;
+import net.zomis.custommap.view.android.events.AndroidTileClickEvent;
 import net.zomis.custommap.view.general.TileInterface;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -63,17 +64,9 @@ public abstract class TileView<TM extends ITileModel<TM>, MM extends GameView<TM
 	public int getXPos() { return this.model.getX(); }
 	public int getYPos() { return this.model.getY(); }
 
-	/**
-	 * Re-initialize the view.
-	 * Does not update the image resource, that needs to be got from the corresponding model.
-	 * @param gridView
-	 */
-	@Deprecated
-	public void reinit(GameView<TM> gridView) {
-		this.view = gridView;
-	}
 	public abstract void update();
 	
+	@Override
 	public void onClick(View view) {
 		if (!this.getMap().getPerformClick()) {
 			CustomFacade.getLog().i("Zomis", "Map says: Do not perform click");
@@ -81,9 +74,7 @@ public abstract class TileView<TM extends ITileModel<TM>, MM extends GameView<TM
 		}
 		
 		// do not do this if map has scrolled recently
-		CustomFacade.getInst().sendNotification(CustomFacade.USER_CLICK_TILE, this);
-		
-//		CustomFacade.getLog().i("Zomis", "Click tile: " + this);
+		CustomFacade.getGlobalEvents().executeEvent(new AndroidTileClickEvent(this));
 	}
 	
 	@Override

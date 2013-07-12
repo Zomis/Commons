@@ -564,4 +564,22 @@ public class DragController {
 		mDropTargets = new ArrayList<DropTarget>();
 	}
 
+	public void javaGarbage() {
+		this.mContext = null;
+//		this.mCoordinatesTemp = null;
+		this.mDisplayMetrics = null;
+		this.mDragInfo = null;
+		this.mDragSource = null;
+		this.mDragView = null;
+		if (this.mDropTargets != null) this.mDropTargets.clear();
+		this.mDropTargets = null;
+		this.mInputMethodManager = null;
+		this.mLastDropTarget = null;
+		this.mListener = null;
+		this.mMoveTarget = null;
+		this.mOriginator = null;
+		this.mRectTemp = null;
+		this.mWindowToken = null;
+	}
+
 }
