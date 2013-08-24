@@ -78,7 +78,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	
 	public void initTileSize(int parentWidth, int parentHeight, int orientation) {
 		tileSize = Math.min(parentWidth, parentHeight) / Math.max(this.getMapWidth(), this.getMapHeight());
-    	CustomFacade.getLog().i("Zomis", String.format("initMap: %d x %d. View size %d x %d. Orientation %d. Tile size %d", this.getMapWidth(), this.getMapHeight(), parentWidth, parentHeight, orientation, tileSize));
+    	CustomFacade.getLog().i(String.format("initMap: %d x %d. View size %d x %d. Orientation %d. Tile size %d", this.getMapWidth(), this.getMapHeight(), parentWidth, parentHeight, orientation, tileSize));
     	this.repaint();
 	}
 	
@@ -100,7 +100,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		else boardView.add((JComponent) image);
 	}
 	public void scroll(float distanceX, float distanceY) {
-		CustomFacade.getLog().v("Zomis", String.format("Scroll %f, %f", distanceX, distanceY));
+		CustomFacade.getLog().v(String.format("Scroll %f, %f", distanceX, distanceY));
 		
 		this.offsetLeft -= distanceX;
 		this.offsetTop -= distanceY;
@@ -127,15 +127,15 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	}
 	
     public void addViewObject(ViewObject object) {
-    	if (object.getViewToAdd() == null) CustomFacade.getLog().e("Zomis", "view object is null");
-    	if (!(object.getViewToAdd() instanceof JComponent)) CustomFacade.getLog().e("Zomis", "GameView ViewObject is wrong: " + object.toString());
+    	if (object.getViewToAdd() == null) CustomFacade.getLog().e("view object is null");
+    	if (!(object.getViewToAdd() instanceof JComponent)) CustomFacade.getLog().e("GameView ViewObject is wrong: " + object.toString());
 		if (boardView != null) boardView.add((JComponent) object.getViewToAdd());
 		
     	
     }
     public void removeViewObject(ViewObject object) {
-    	if (object == null) CustomFacade.getLog().e("Zomis", "view object is null");
-    	if (!(object.getViewToAdd() instanceof JComponent)) CustomFacade.getLog().e("Zomis", "GameView ViewObject is wrong: " + object.toString());
+    	if (object == null) CustomFacade.getLog().e("view object is null");
+    	if (!(object.getViewToAdd() instanceof JComponent)) CustomFacade.getLog().e("GameView ViewObject is wrong: " + object.toString());
 		if (boardView != null) boardView.remove((JComponent) object.getViewToAdd());
     }
 

@@ -22,7 +22,7 @@ public class MapPaintable implements ViewObject {
 	
 	public MapPaintable(ISwingGameView gameView) {
 		this.view = gameView;
-		//	Log.d("Zomis", "MapPaintable-Init");
+		//	CustomFacade.getLog().d("Zomis", "MapPaintable-Init");
 		if (gameView != null) {
 			if (gameView.getLayout() != null) {
 				image = new ImagePanel(this);
@@ -40,7 +40,7 @@ public class MapPaintable implements ViewObject {
 //	protected void onDraw(Canvas canvas) {}
 	
 	public int setImageResourceByName(String drawableName) {
-//		Log.i("Zomis", "setImageResourceByName " + drawableName);
+//		CustomFacade.getLog().i("Zomis", "setImageResourceByName " + drawableName);
 		this.image.setImageFromResourceName(drawableName);
 		return 0;
 	}
@@ -51,13 +51,13 @@ public class MapPaintable implements ViewObject {
     public void updatePosition() {
     	if (this.view == null) return;
     	if (this.image == null) return;
-//    	Log.v("Zomis", String.format("updatePosition: pos (%d, %d) size: %d offset (%d, %d)", this.x, this.y, this.getTileSize(), this.view.getOffsetLeft(), this.view.getOffsetTop()));
+//    	CustomFacade.getLog().v("Zomis", String.format("updatePosition: pos (%d, %d) size: %d offset (%d, %d)", this.x, this.y, this.getTileSize(), this.view.getOffsetLeft(), this.view.getOffsetTop()));
     	
         final int left = this.view.getOffsetLeft() + this.x;// this.x and this.y is in pixels, not in tile index. (getModel for tile index)
         final int top = this.view.getOffsetTop() + this.y;
         final int right = left + this.getWidth();
         final int bottom = top + this.getHeight();
-      //   Log.v("Zomis", String.format("LTRB %d, %d, %d, %d", left, top, right, bottom));
+      //   CustomFacade.getLog().v("Zomis", String.format("LTRB %d, %d, %d, %d", left, top, right, bottom));
       //  CustomFacade.getLog().v("Zomis", "MapPaintable " + this.getWidth() + ", " + this.getHeight());
         this.image.setBounds(left, top, right - left, bottom - top);
     }
@@ -71,7 +71,7 @@ public class MapPaintable implements ViewObject {
 	public boolean onTouch(View view, MotionEvent event) {
 //		event.setLocation(event.x, y);
 		
-		//Log.v("Zomis", "MapPaintable onTouch " + this.toString() + "; " + event.toString());
+		//CustomFacade.getLog().v("Zomis", "MapPaintable onTouch " + this.toString() + "; " + event.toString());
 	   	this.getMap().onTouch(view, event);// gestureScanner.onTouchEvent(event);
 	  // 	this.getMap().onTouch(this.getMap().boardView, event);// gestureScanner.onTouchEvent(event);
 		return false;// what happens if true is returned here instead ???
@@ -85,7 +85,7 @@ public class MapPaintable implements ViewObject {
 
 /*	@Override
 	public boolean onLongClick(View v) {
-		Log.i("Zomis", "MapPaintable onLongClick" + MapPaintable.this.x);
+		CustomFacade.getLog().i("Zomis", "MapPaintable onLongClick" + MapPaintable.this.x);
 		return false;
 	}*/
 	public int getSize() { return this.size; }

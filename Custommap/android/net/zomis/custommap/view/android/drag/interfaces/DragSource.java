@@ -19,7 +19,6 @@
 
 package net.zomis.custommap.view.android.drag.interfaces;
 
-import net.zomis.custommap.view.android.drag.DragController;
 
 /**
  * Interface defining an object where drag operations originate.
@@ -32,16 +31,6 @@ public interface DragSource {
 	 * @return True if there is something to drag
 	 */
 	boolean allowDrag();
-
-	/**
-	 * This method is used to tell the DragSource which drag controller it is
-	 * working with.
-	 * 
-	 * @param dragger
-	 *            DragController
-	 */
-
-	void setDragController(DragController dragger);
 
 	/**
 	 * This method is called on the completion of the drag operation so the

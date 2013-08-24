@@ -26,7 +26,7 @@ public class ImagePanel extends JPanel {
 //    		this.repaint();
     	}
     	catch (IOException ex) {
-    		CustomFacade.getLog().e("Zomis", "File not found: " + name + ".png");
+    		CustomFacade.getLog().e("File not found: " + name + ".png");
     	}
 	}
 

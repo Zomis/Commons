@@ -29,7 +29,7 @@ public class AndroidTimer extends ZomisTimer {
 		this._timer.removeCallbacks(mUpdateTimeTask);
 		this._timer.postDelayed(mUpdateTimeTask, this.delay);
         this.running = true;
-        CustomFacade.getLog().i("Zomis", "timerStart!");
+        CustomFacade.getLog().i("timerStart!");
 	}
 
 	@Override

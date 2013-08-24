@@ -12,10 +12,12 @@ import java.util.Set;
 import net.zomis.custommap.CustomFacade;
 
 import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class EventExecutor {
-	private static final org.apache.log4j.Logger logger = LogManager.getLogger("Zomis");
+	private static final Logger logger = LogManager.getLogger("Zomis");
 	private Map<Class<? extends BaseEvent>, Collection<EventHandler>> bindings;
+	private Set<EventListener> registeredListeners = new HashSet<EventListener>();
 	
 	private boolean debug = false;
 	public void setDebug(boolean debug) {
@@ -31,7 +33,11 @@ public class EventExecutor {
 		return new ArrayList<EventHandler>(this.bindings.get(clazz));
 	}
 
+	@Deprecated
 	public CancellableEvent executeCancellableEvent(CancellableEvent event) {
+		if (this != CustomFacade.getGlobalEvents())
+			CustomFacade.getGlobalEvents().executeCancellableEvent(event);
+		
 		if (event instanceof BaseEvent) {
 			this.executeEvent((BaseEvent) event);
 			if (event.isCancelled()) {
@@ -41,7 +47,10 @@ public class EventExecutor {
 		return event;
 	}
 	
-	public BaseEvent executeEvent(BaseEvent event) {
+	public <T extends IEvent> T executeEvent(T event) {
+		if (this != CustomFacade.getGlobalEvents())
+			CustomFacade.getGlobalEvents().executeEvent(event);
+		
 		if (this.debug) {
 			logger.info("Execute Event: " + event.getClass().getSimpleName());
 			CustomFacade.getLog().i("Execute Event: " + event.getClass().getSimpleName());
@@ -69,7 +78,6 @@ public class EventExecutor {
 		return event;
 	}
 	
-	private Set<EventListener> registeredListeners = new HashSet<EventListener>();
 	
 	public void registerListener(final EventListener listener) {
 		logger.info("Register event listener: " + listener);
@@ -119,6 +127,7 @@ public class EventExecutor {
 
 	public void clearListeners() {
 		this.bindings.clear();
+		this.registeredListeners.clear();
 	}
 
 	public void removeListener(EventListener listener) {

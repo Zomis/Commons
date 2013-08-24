@@ -3,10 +3,15 @@ package net.zomis.custommap.view;
 import net.zomis.custommap.CustomFacade;
 
 public abstract class ZomisLog {
+	@Deprecated
 	public abstract void v(String tag, String data);
+	
 	public abstract void d(String tag, String data);
+	
 	public abstract void i(String tag, String data);
+	@Deprecated
 	public abstract void w(String tag, String data);
+	@Deprecated
 	public abstract void e(String tag, String data);
 
 	public void v(String msg) {

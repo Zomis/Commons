@@ -24,6 +24,10 @@ package net.zomis.android;
 import java.util.List;
 
 import net.zomis.custommap.CustomFacade;
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -56,6 +60,8 @@ import android.widget.TextView;
  * within a larger container.
  */
 public class TwoDScrollView extends FrameLayout {
+	private static Logger logger = LogManager.getLogger(TwoDScrollView.class);
+	
 	public static interface OnMyTouchListener {
 		void onMyTouch(MotionEvent event);
 	}
@@ -117,7 +123,7 @@ public class TwoDScrollView extends FrameLayout {
 
 	
 	private OnMyTouchListener onTouchListener;
-	
+
 	public void setMyOnTouchListener(OnMyTouchListener onTouchListener) {
 		this.onTouchListener = onTouchListener;
 	}
@@ -335,6 +341,8 @@ public class TwoDScrollView extends FrameLayout {
 		 * state and he is moving his finger.  We want to intercept this
 		 * motion.
 		 */
+		CustomFacade.getLog().v("scroll - onIntercept " + ev);
+		
 		final int action = ev.getActionMasked();
 		if ((action == MotionEvent.ACTION_MOVE) && (mIsBeingDragged)) {
 			return true;
@@ -391,7 +399,8 @@ public class TwoDScrollView extends FrameLayout {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent ev) {
-		CustomFacade.getLog().d("2D Touch: " + ev);
+//		CustomFacade.getLog().v("scroll - onTouch " + ev);
+		logger.trace("2D Touch: " + ev);
 
 		if (this.onTouchListener != null) {
 			this.onTouchListener.onMyTouch(ev);

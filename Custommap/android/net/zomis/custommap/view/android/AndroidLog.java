@@ -3,6 +3,7 @@ package net.zomis.custommap.view.android;
 import net.zomis.custommap.view.ZomisLog;
 import android.util.Log;
 
+@Deprecated
 public class AndroidLog extends ZomisLog {
 	public void v(String tag, String data) {
 		Log.v(tag, data);

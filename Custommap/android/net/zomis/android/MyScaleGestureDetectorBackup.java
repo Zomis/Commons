@@ -18,7 +18,6 @@ package net.zomis.android;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
-import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -343,7 +342,7 @@ public class MyScaleGestureDetectorBackup implements IScaleGestureDetector {
         if (mCurrLen == -1) {
             final float cvx = mCurrFingerDiffX;
             final float cvy = mCurrFingerDiffY;
-            mCurrLen = FloatMath.sqrt(cvx*cvx + cvy*cvy);
+            mCurrLen = (float) Math.sqrt((float) (cvx*cvx + cvy*cvy));
         }
         return mCurrLen;
     }
@@ -358,7 +357,7 @@ public class MyScaleGestureDetectorBackup implements IScaleGestureDetector {
         if (mPrevLen == -1) {
             final float pvx = mPrevFingerDiffX;
             final float pvy = mPrevFingerDiffY;
-            mPrevLen = FloatMath.sqrt(pvx*pvx + pvy*pvy);
+            mPrevLen = (float) Math.sqrt((float) (pvx*pvx + pvy*pvy));
         }
         return mPrevLen;
     }

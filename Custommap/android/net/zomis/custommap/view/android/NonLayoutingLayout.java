@@ -21,13 +21,6 @@ public class NonLayoutingLayout extends ViewGroup {
     public NonLayoutingLayout(Context context) {
         super(context);
     }
-/*
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-    	// http://developer.android.com/reference/android/view/ViewGroup.html#onInterceptTouchEvent%28android.view.MotionEvent%29
-    	return false;
-    }
-*/    
     
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -61,7 +54,4 @@ public class NonLayoutingLayout extends ViewGroup {
         
         
     }
-	public int getScroller() {
-		return 0;
-	}
 }

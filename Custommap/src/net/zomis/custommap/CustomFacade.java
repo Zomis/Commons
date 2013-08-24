@@ -22,6 +22,7 @@ public class CustomFacade implements EventListener {
 	private static ZomisLog logger;
 	
 	public static EventExecutor getGlobalEvents() {
+		if (instance == null) return null;
 		return instance.events;
 	}
 	

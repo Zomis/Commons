@@ -4,7 +4,16 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 public class Log4jLog extends ZomisLog {
-	private static Logger logger = LogManager.getLogger("Zomis");
+	private Logger	logger;
+	
+	@Deprecated
+	public Log4jLog() {
+		this.logger = LogManager.getLogger("Zomis");
+	}
+	public Log4jLog(String logger) {
+		this.logger = LogManager.getLogger(logger);
+	}
+	
 	
 	@Override
 	public void v(String tag, String data) {

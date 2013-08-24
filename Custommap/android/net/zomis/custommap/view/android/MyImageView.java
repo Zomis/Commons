@@ -15,7 +15,7 @@ import android.widget.ImageView;
  * 
  */
 public class MyImageView extends ImageView implements ViewObject {
-	public interface ImageDraw {
+	public static interface ImageDraw {
 		void onDraw(MyImageView myImageView, Canvas canvas);
 	}
 	

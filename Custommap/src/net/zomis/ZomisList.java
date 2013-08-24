@@ -137,6 +137,14 @@ public class ZomisList {
 		return result;
 		
 	}
+	// TODO: getExtreme method to find ONE highest/lowest.
+//	ZomisList.getExtreme(false, map.getGates(), new ZomisList.GetValueInterface<Gate>() {
+//	@Override
+//	public double getValue(Gate obj) {
+//		if (obj.getMicroWorld() == null) return null;
+//		return 0;
+//	}
+//});
 	
 	public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(Map<K, V> map, final boolean descending) {
 		SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(

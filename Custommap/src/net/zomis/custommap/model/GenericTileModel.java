@@ -29,6 +29,7 @@ public abstract class GenericTileModel<TM extends ITileModel<? extends TM>, MM e
 		
 		return map.pos(nx, ny);
 	}
+	@Deprecated
 	public String getCoordinateHex() {
 		int radix = 16;
 		return Integer.toString(this.xpos, radix) + Integer.toString(this.ypos, radix);

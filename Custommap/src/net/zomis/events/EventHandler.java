@@ -29,7 +29,7 @@ public class EventHandler {
 		return listener;
 	}
 	
-	public void execute(BaseEvent event) {
+	public void execute(IEvent event) {
 		try {
 			method.invoke(listener, event);
 		} catch (IllegalAccessException e1) { // Invoke exceptions

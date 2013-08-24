@@ -3,17 +3,20 @@ package net.zomis.custommap.view.android;
 import net.zomis.custommap.CustomFacade;
 
 public class CustommapCenterScrollCommand {
+	public static float center(float width, float parentWidth) {
+		return (width - parentWidth) / 2;
+	}
 	public static void centerScroll(IAndroidGameView view) {
 		
 //		view.updateScrollBounds(true);
-		view.getLayout().getWidth();
+//		view.getLayout().getWidth();
 		
 /*		left == right
  * 		x = parentWidth - (x + width)
  *      2x = parentWidth - width
  *      x = (parentWidth - width) / 2
  */
-		int scrollToX = (view.getLayout().getWidth() - view.getScrollBounds().width()) / 2;
+		int scrollToX = (view.getLayout().getWidth()  - view.getScrollBounds().width()) / 2;
 		int scrollToY = (view.getLayout().getHeight() - view.getScrollBounds().height()) / 2;
 		
 		CustomFacade.getLog().v(String.format("CenterScroll Bounds: %s", view.getScrollBounds().toString()));

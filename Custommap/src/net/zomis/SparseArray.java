@@ -91,7 +91,7 @@ public class SparseArray<E> {
     }
 
     private void gc() {
-        // Log.e("SparseArray", "gc start with " + mSize);
+        // CustomFacade.getLog().e("SparseArray", "gc start with " + mSize);
 
         int n = mSize;
         int o = 0;
@@ -114,7 +114,7 @@ public class SparseArray<E> {
         mGarbage = false;
         mSize = o;
 
-        // Log.e("SparseArray", "gc end with " + mSize);
+        // CustomFacade.getLog().e("SparseArray", "gc end with " + mSize);
     }
 
     /**
@@ -149,7 +149,7 @@ public class SparseArray<E> {
                 int[] nkeys = new int[n];
                 Object[] nvalues = new Object[n];
 
-                // Log.e("SparseArray", "grow " + mKeys.length + " to " + n);
+                // CustomFacade.getLog().e("SparseArray", "grow " + mKeys.length + " to " + n);
                 System.arraycopy(mKeys, 0, nkeys, 0, mKeys.length);
                 System.arraycopy(mValues, 0, nvalues, 0, mValues.length);
 
@@ -158,7 +158,7 @@ public class SparseArray<E> {
             }
 
             if (mSize - i != 0) {
-                // Log.e("SparseArray", "move " + (mSize - i));
+                // CustomFacade.getLog().e("SparseArray", "move " + (mSize - i));
                 System.arraycopy(mKeys, i, mKeys, i + 1, mSize - i);
                 System.arraycopy(mValues, i, mValues, i + 1, mSize - i);
             }
@@ -290,7 +290,7 @@ public class SparseArray<E> {
             int[] nkeys = new int[n];
             Object[] nvalues = new Object[n];
 
-            // Log.e("SparseArray", "grow " + mKeys.length + " to " + n);
+            // CustomFacade.getLog().e("SparseArray", "grow " + mKeys.length + " to " + n);
             System.arraycopy(mKeys, 0, nkeys, 0, mKeys.length);
             System.arraycopy(mValues, 0, nvalues, 0, mValues.length);
 
@@ -327,7 +327,7 @@ public class SparseArray<E> {
 //        for (int i = 1; i < mSize; i++) {
 //            if (mKeys[i] <= mKeys[i - 1]) {
 //                for (int j = 0; j < mSize; j++) {
-////                    Log.e("FAIL", j + ": " + mKeys[j] + " -> " + mValues[j]);
+////                    CustomFacade.getLog().e("FAIL", j + ": " + mKeys[j] + " -> " + mValues[j]);
 //                }
 //
 //                throw new RuntimeException();

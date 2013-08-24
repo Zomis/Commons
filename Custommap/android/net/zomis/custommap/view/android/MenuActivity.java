@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
+@Deprecated
 public abstract class MenuActivity extends Activity implements OnClickListener {
 	private View oldView = null;
 	private RelativeLayout buttonLayout;

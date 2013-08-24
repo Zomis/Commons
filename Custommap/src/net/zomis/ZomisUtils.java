@@ -176,4 +176,7 @@ public class ZomisUtils {
 	public static String textBetween(String theString, String after, String before) {
 		return textBefore(textAfter(theString, after), before);
 	}
+	public static Class<?> classFor(Object data) {
+		return data == null ? null : data.getClass();
+	}
 }

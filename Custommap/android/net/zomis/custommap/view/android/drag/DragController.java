@@ -21,6 +21,7 @@ package net.zomis.custommap.view.android.drag;
 
 import java.util.ArrayList;
 
+import net.zomis.custommap.CustomFacade;
 import net.zomis.custommap.view.android.drag.interfaces.DragListener;
 import net.zomis.custommap.view.android.drag.interfaces.DragSource;
 import net.zomis.custommap.view.android.drag.interfaces.DropTarget;
@@ -29,7 +30,6 @@ import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.os.IBinder;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,20 +52,15 @@ import android.view.inputmethod.InputMethodManager;
  */
 
 public class DragController {
-	private static final String TAG = "DragController";
-
 	/** Indicates the drag is a move. */
 	public static int DRAG_ACTION_MOVE = 0;
 
 	/** Indicates the drag is a copy. */
 	public static int DRAG_ACTION_COPY = 1;
 
-//	private static final int VIBRATE_DURATION = 35;
-
 	private static final boolean PROFILE_DRAWING_DURING_DRAG = false;
 
 	private Context mContext;
-//	private Vibrator mVibrator;
 
 	// temporaries to avoid gc thrash
 	private Rect mRectTemp = new Rect();
@@ -122,6 +117,7 @@ public class DragController {
 	 *            The application's context.
 	 */
 	public DragController(Context context) {
+		if (context == null) throw new NullPointerException("DragController Context is null");
 		mContext = context;
 //		mVibrator = (Vibrator) context
 //				.getSystemService(Context.VIBRATOR_SERVICE);
@@ -143,8 +139,7 @@ public class DragController {
 	 *            {@link #DRAG_ACTION_COPY}
 	 * @return True if drag was started successfully, false otherwise.
 	 */
-	public boolean startDrag(View v, DragSource source, Object dragInfo,
-			int dragAction) {
+	public boolean startDrag(View v, DragSource source, Object dragInfo, int dragAction) {
 		// Start dragging, but only if the source has something to drag.
 		boolean doDrag = source.allowDrag();
 		if (!doDrag)
@@ -237,6 +232,7 @@ public class DragController {
 				registrationX, registrationY, textureLeft, textureTop,
 				textureWidth, textureHeight);
 		dragView.show(mWindowToken, (int) mMotionDownX, (int) mMotionDownY);
+		CustomFacade.getLog().i("show " + mMotionDownX + " " + mMotionDownY);
 	}
 
 	/**
@@ -260,8 +256,7 @@ public class DragController {
 		v.buildDrawingCache();
 		Bitmap cacheBitmap = v.getDrawingCache();
 		if (cacheBitmap == null) {
-			Log.e(TAG, "failed getViewBitmap(" + v + ")",
-					new RuntimeException());
+			CustomFacade.getLog().e("failed getViewBitmap(" + v + ")");
 			return null;
 		}
 
@@ -316,6 +311,7 @@ public class DragController {
 	 * Call this from a drag source view.
 	 */
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		CustomFacade.getLog().v("drager - onIntercept " + ev);
 		final int action = ev.getActionMasked();
 
 		if (action == MotionEvent.ACTION_DOWN) {
@@ -425,7 +421,7 @@ public class DragController {
 //			 if (mDeleteRegion != null) {
 //				 inDeleteRegion = mDeleteRegion.contains(screenX, screenY);
 //			 }
-//			 //Log.d(TAG, "inDeleteRegion=" + inDeleteRegion + " screenX=" + screenX // + " mScrollZone=" + mScrollZone); 
+//			 //CustomFacade.getLog().d(TAG, "inDeleteRegion=" + inDeleteRegion + " screenX=" + screenX // + " mScrollZone=" + mScrollZone); 
 //			 if (!inDeleteRegion && screenX < mScrollZone) {
 //				 if (mScrollState ==
 //			 SCROLL_OUTSIDE_ZONE) { mScrollState = SCROLL_WAITING_IN_ZONE;

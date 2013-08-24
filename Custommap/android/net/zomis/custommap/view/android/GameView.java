@@ -13,7 +13,6 @@ import net.zomis.custommap.view.general.ViewObject;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -23,7 +22,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
 public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements IAndroidGameView, OnTouchListener, OnLongClickListener {
-	public transient ViewGroup boardView;
+	private ViewGroup boardView;
 	
 	protected GenericMapModel<TM> mapModel;
 	public GenericMapModel<TM> getMapModel() { return this.mapModel; }
@@ -92,7 +91,8 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	    // Fix map
 	    this.map = new ArrayList<TileInterface<TM>>();
 	    this.scrollBounds = new Rect(0, 0, 0, 0);
-	    if (model.hasMap()) {
+	    
+	    if (model != null && model.hasMap()) {
 	    	Iterator<TM> it = model.iterator();
 	    	while (it.hasNext()) {
 	    		TM tm = it.next();
@@ -110,9 +110,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	    this.gestureScanner = new GestureDetector(view.getContext(), this.gestureListener, view.getHandler(), true);
 	    view.setOnTouchListener(this);
 	    
-	    // Observe NonLayoutingLayout to be notified on when it calls onSizeChanged.
 	    view.setTag(this);
-//		view.requestLayout();
 	}
 
 /*	private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -171,8 +169,9 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		return null;
 	}
 	
+	@Override
 	public boolean onLongClick(View v) {
-		Log.w("Zomis", "Method not overriden: GridView.onLongClick");
+		CustomFacade.getLog().w("Method not overriden: GridView.onLongClick");
 		return false;
 	}
 	
@@ -181,11 +180,14 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	 */
 	boolean performClick = false;
 	
+	@Deprecated
 	private View lastView;
+	@Deprecated
 	public View getLastTouchedView() { return this.lastView; }
 	
+	@Override
 	public boolean onTouch(View view, MotionEvent event) {
-//		CustomFacade.getLog().v("Zomis", "GameView: onTouch: " + event.toString());
+//		CustomFacade.getLog().v("GameView: onTouch: " + event.toString());
 		this.lastView = view;// separating MapPaintable scrolling from layout scrolling.
 		gestureScanner.onTouchEvent(event);
     	if (mScaleDetector != null) mScaleDetector.onTouchEvent(event);
@@ -235,12 +237,12 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		
 		this.boardView.scrollTo(scrollX, scrollY);
 
-//		Log.v("Zomis", String.format("Scroll is now %d, %d", scrollX, scrollY));
+//		CustomFacade.getLog().v(String.format("Scroll is now %d, %d", scrollX, scrollY));
 	}
 	
     public void addViewObject(ViewObject object) {
     	if (object == null) throw new IllegalArgumentException("View object is null");// will this be caught anywhere ?
-    	if (!(object.getViewToAdd() instanceof View)) CustomFacade.getLog().e("Zomis", "GameView.addViewObject: View to add is invalid: " + object.toString() + " view to add is " + object.getViewToAdd());
+    	if (!(object.getViewToAdd() instanceof View)) CustomFacade.getLog().e("GameView.addViewObject: View to add is invalid: " + object.toString() + " view to add is " + object.getViewToAdd());
 		if (boardView == null) throw new NullPointerException("boardView is null");
 		
 		if (boardView.indexOfChild((View) object.getViewToAdd()) == -1)
@@ -249,7 +251,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
     }
     public void removeViewObject(ViewObject object) {
     	if (object == null) return; // throw new IllegalArgumentException("View object is null");
-    	if (!(object.getViewToAdd() instanceof View)) CustomFacade.getLog().e("Zomis", "GameView.removeViewObject: View to add is invalid: " + object.toString());
+    	if (!(object.getViewToAdd() instanceof View)) CustomFacade.getLog().e("GameView.removeViewObject: View to add is invalid: " + object.toString());
 		if (boardView == null) throw new NullPointerException("boardView is null");
 		if (boardView != null) 
 		

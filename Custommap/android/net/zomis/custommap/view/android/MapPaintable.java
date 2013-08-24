@@ -34,7 +34,7 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
 	
 	public MapPaintable(IAndroidGameView g) {
 		this.view = g;
-		//	Log.d("Zomis", "MapPaintable-Init");
+		//	CustomFacade.getLog().d("Zomis", "MapPaintable-Init");
 		if (g != null) {
 			if (g.getLayout() != null) {
 				if (g.getLayout().getContext() != null) {
@@ -88,7 +88,7 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
     
 	public boolean onTouch(View view, MotionEvent event) {
 //		event.setLocation(event.x, y);
-		//Log.v("Zomis", "MapPaintable onTouch " + this.toString() + "; " + event.toString());
+		//CustomFacade.getLog().v("Zomis", "MapPaintable onTouch " + this.toString() + "; " + event.toString());
 		if (event.getActionMasked() == MotionEvent.ACTION_DOWN)
 			this.getMap().setPerformClick(true);
 		this.getMap().onTouch(view, event);
@@ -157,13 +157,13 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
 	public void updatePosition() {
     	if (this.view == null) return;
     	if (this.image == null) return;
-//    	Log.v("Zomis", String.format("updatePosition: pos (%d, %d) size: %d", this.x, this.y, this.getTileSize()));
+//    	CustomFacade.getLog().v("Zomis", String.format("updatePosition: pos (%d, %d) size: %d", this.x, this.y, this.getTileSize()));
     	
         final int left = this.x;// this.x and this.y is in pixels, not in tile index. (xpos and ypos are tile index)
         final int top = this.y;
         final int right = left + this.getSize();
         final int bottom = top + this.getSize();
-      //   Log.v("Zomis", String.format("LTRB %d, %d, %d, %d", left, top, right, bottom));
+      //   CustomFacade.getLog().v("Zomis", String.format("LTRB %d, %d, %d, %d", left, top, right, bottom));
         this.image.layout(left, top, right, bottom);
     }
 }
