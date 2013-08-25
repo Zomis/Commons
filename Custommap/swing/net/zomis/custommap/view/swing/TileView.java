@@ -61,15 +61,6 @@ public abstract class TileView<TM extends ITileModel<TM>> extends MapPaintable i
 	public int getXPos() { return this.model.getX(); }
 	public int getYPos() { return this.model.getY(); }
 
-	/**
-	 * Re-initialize the view.
-	 * Does not update the image resource, that needs to be got from the corresponding model.
-	 * @param gridView
-	 */
-	@Deprecated
-	public void reinit(ISwingGameView gridView) {
-		this.view = gridView;
-	}
 	public abstract void update();
 	
 }

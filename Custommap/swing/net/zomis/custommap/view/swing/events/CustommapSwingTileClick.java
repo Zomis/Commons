@@ -3,9 +3,9 @@ package net.zomis.custommap.view.swing.events;
 import java.awt.event.MouseEvent;
 
 import net.zomis.custommap.view.swing.TileView;
-import net.zomis.events.BaseEvent;
+import net.zomis.events.IEvent;
 
-public class CustommapSwingTileClick extends BaseEvent {
+public class CustommapSwingTileClick implements IEvent {
 
 	private TileView<?>	tile;
 	private MouseEvent	event;

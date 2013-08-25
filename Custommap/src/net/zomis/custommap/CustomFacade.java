@@ -46,7 +46,9 @@ public class CustomFacade implements EventListener {
 
     protected static CustomFacade instance = null;
 
+    @Deprecated
     private static int nextId = 1;
+    @Deprecated
     public static int getNextID() {
     	return nextId++;
     }
@@ -63,6 +65,7 @@ public class CustomFacade implements EventListener {
 	}
 	
     public ZomisTimer createTimer(int delay, Runnable runnable) {
+    	if (this.timerClass == null) throw new NullPointerException("CustomFacade.timerClass not set.");
     	try {
     		Constructor<? extends ZomisTimer> c = this.timerClass.getDeclaredConstructor(Integer.class, Runnable.class);
 //    		c.setAccessible(true);

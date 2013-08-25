@@ -12,7 +12,6 @@ public abstract class MyImageView extends JPanel implements ViewObject {
 	public MyImageView(ISwingGameView map, boolean backGround) {
 		super();
 		this.view = map;
-//		if (map != null)
 		if (!backGround)
 			map.addViewObject(this);
 		else map.addViewToGame(this, backGround);

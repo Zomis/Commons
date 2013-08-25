@@ -1,10 +1,10 @@
 package net.zomis.custommap.view.android.events;
 
-import android.view.MotionEvent;
 import net.zomis.custommap.view.android.IAndroidGameView;
-import net.zomis.events.BaseEvent;
+import net.zomis.events.IEvent;
+import android.view.MotionEvent;
 
-public class AndroidFlingEvent extends BaseEvent {
+public class AndroidFlingEvent implements IEvent {
 
 	public AndroidFlingEvent(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY, IAndroidGameView mapView) {
 		this.e1 = e1;

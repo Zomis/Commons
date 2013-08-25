@@ -3,11 +3,11 @@ package net.zomis.events;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 public class EventHandler {
-	private static final Logger logger = LoggerFactory.getLogger(EventHandler.class);
+	private static final Logger logger = LogManager.getLogger(EventHandler.class);
 	
 	private final EventListener	listener;
 	private final Method	method;

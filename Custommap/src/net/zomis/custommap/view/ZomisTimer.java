@@ -9,6 +9,9 @@ public abstract class ZomisTimer {
 	protected int delay;
 	protected boolean running;
 	protected int repeats = -1;
+	public int getDelay() {
+		return delay;
+	}
 	public void setDelay(int delay) {
 		this.delay = delay;
 	}

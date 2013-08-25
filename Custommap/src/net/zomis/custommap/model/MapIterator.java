@@ -2,12 +2,22 @@ package net.zomis.custommap.model;
 
 import java.util.Iterator;
 
-public class MapIterator<E> implements Iterator<E> {
+public class MapIterator<E> implements Iterator<E>, IteratorStatus {
+	
 	private int x;
 	private int y;
 	private E[][] array;
 //	private E[] xrow;
+	private int	lastIndexX;
+	private int	lastIndexY;
 
+	public int getLastIndexX() {
+		return lastIndexX;
+	}
+	public int getLastIndexY() {
+		return lastIndexY;
+	}
+	
 	public MapIterator(E[][] array) {
 		this.array = array;
 		this.x = 0;
@@ -26,10 +36,10 @@ public class MapIterator<E> implements Iterator<E> {
 	}
 
 	public E next() {
-		if (this.array == null) return null;
-
-		if (!this.hasNext()) return null;
-		
+		if (this.array == null) throw new NullPointerException("Array is null");
+		if (!this.hasNext()) throw new IllegalStateException("Doesn't have next");
+		this.lastIndexX = x;
+		this.lastIndexY = y;
 		E ev = array[x][y];
 		x++;
 		if (x >= array.length) {
@@ -42,5 +52,8 @@ public class MapIterator<E> implements Iterator<E> {
 
 	public void remove() {
 		throw new UnsupportedOperationException();
+	}
+	public boolean isNextLineBreak() {
+		return (getLastIndexX() == array.length - 1);
 	}
 }

@@ -4,7 +4,7 @@ package net.zomis.custommap.view.swing;
 
 import net.zomis.custommap.view.general.ViewObject;
 /**
- * Target: Android
+ * Target: Swing
  * 
  * Represents something that can be drawn on the map
  * Contains an ImageView and a reference to a GameView.
@@ -66,28 +66,13 @@ public class MapPaintable implements ViewObject {
 		return this.getMap().getTileSizeReal();
 	}
     
-/*    
-	@Override
-	public boolean onTouch(View view, MotionEvent event) {
-//		event.setLocation(event.x, y);
-		
-		//CustomFacade.getLog().v("Zomis", "MapPaintable onTouch " + this.toString() + "; " + event.toString());
-	   	this.getMap().onTouch(view, event);// gestureScanner.onTouchEvent(event);
-	  // 	this.getMap().onTouch(this.getMap().boardView, event);// gestureScanner.onTouchEvent(event);
-		return false;// what happens if true is returned here instead ???
-	}
-  */
 	public void remove() {
 		view.removeViewObject(this);
 		view = null;
 		image = null;
 	}
 
-/*	@Override
-	public boolean onLongClick(View v) {
-		CustomFacade.getLog().i("Zomis", "MapPaintable onLongClick" + MapPaintable.this.x);
-		return false;
-	}*/
+
 	public int getSize() { return this.size; }
 	public int getWidth() { return this.size; }
 	public int getHeight() { return this.size; }

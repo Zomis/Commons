@@ -8,8 +8,6 @@ public interface IGameView {
 	void addViewObject(ViewObject object);
 	void removeViewObject(ViewObject object);
 	int getTileSizeReal();
-	int getMapWidth();
-	int getMapHeight();
 	abstract void repaint();
 	
 	

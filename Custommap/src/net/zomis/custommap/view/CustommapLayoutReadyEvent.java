@@ -1,9 +1,9 @@
 package net.zomis.custommap.view;
 
 import net.zomis.custommap.view.android.NonLayoutingLayout;
-import net.zomis.events.BaseEvent;
+import net.zomis.events.IEvent;
 
-public class CustommapLayoutReadyEvent extends BaseEvent {
+public class CustommapLayoutReadyEvent implements IEvent {
 
 	private final NonLayoutingLayout	layout;
 

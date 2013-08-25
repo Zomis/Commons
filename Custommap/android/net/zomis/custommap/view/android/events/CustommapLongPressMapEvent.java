@@ -1,10 +1,10 @@
 package net.zomis.custommap.view.android.events;
 
-import android.view.MotionEvent;
 import net.zomis.custommap.view.android.IAndroidGameView;
-import net.zomis.events.BaseEvent;
+import net.zomis.events.IEvent;
+import android.view.MotionEvent;
 
-public class CustommapLongPressMapEvent extends BaseEvent {
+public class CustommapLongPressMapEvent implements IEvent {
 
 	private final IAndroidGameView	gameView;
 	private final MotionEvent	motionEvent;

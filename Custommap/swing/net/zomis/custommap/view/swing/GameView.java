@@ -32,18 +32,10 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	public int getTileSize() { return this.tileSize; }
 	public int getTileSizeReal() { return this.tileSize; }
 	public void setTileSize(int tileSize) { this.tileSize = tileSize; this.repaint(); }
-	public int getMapWidth() { return this.mapModel.getMapWidth(); }
-	public int getMapHeight() { return this.mapModel.getMapHeight(); }
 	public int bgColor = 0xFF000000;
 	
 	public List<TileInterface<TM>> map;// test with non-transient
 
-	@Deprecated
-	public void reinitTiles() {
-//		for (ViewTile tv : map)
-//			tv.reinit(this);
-	}
-	
 	protected float scaleFactorMin = 0.1f;
 	protected float scaleFactorMax = 10.0f;
 	
@@ -53,13 +45,6 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	public GameView(JPanel view, GenericMapModel<TM> model) {
 		this.mapModel = model;
 		this.boardView = view;
-        //if (view != null) view.setGame(this);
-        
-//        this.postDrawings = new ArrayList<Overlay>();
-        
-        if (view != null) {
-        	// set listeners on boardView...
-        }
         
         this.map = new ArrayList<TileInterface<TM>>();
         if (model.hasMap()) {
@@ -72,13 +57,14 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
         }
 	}
 	
-	public TileInterface<TM> newTileView(ISwingGameView view, TM model) {
-		return null;
-	}
+	public abstract TileInterface<TM> newTileView(ISwingGameView view, TM model);
 	
 	public void initTileSize(int parentWidth, int parentHeight, int orientation) {
-		tileSize = Math.min(parentWidth, parentHeight) / Math.max(this.getMapWidth(), this.getMapHeight());
-    	CustomFacade.getLog().i(String.format("initMap: %d x %d. View size %d x %d. Orientation %d. Tile size %d", this.getMapWidth(), this.getMapHeight(), parentWidth, parentHeight, orientation, tileSize));
+		tileSize = Math.min(parentWidth, parentHeight) / Math.max(this.mapModel.getMapWidth(), this.mapModel.getMapHeight());
+    	CustomFacade.getLog().i(String.format("initMap: %d x %d. View size %d x %d. Orientation %d. Tile size %d", 
+    			this.mapModel.getMapWidth(), this.mapModel.getMapHeight(), 
+    				parentWidth, parentHeight,
+    					orientation, tileSize));
     	this.repaint();
 	}
 	
@@ -99,20 +85,12 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 			boardView.add((JComponent) image, 0);
 		else boardView.add((JComponent) image);
 	}
+	@Deprecated
 	public void scroll(float distanceX, float distanceY) {
 		CustomFacade.getLog().v(String.format("Scroll %f, %f", distanceX, distanceY));
 		
 		this.offsetLeft -= distanceX;
 		this.offsetTop -= distanceY;
-		
-/*		View temp = this.boardView;
-//		AbsoluteLayout.LayoutParams relativeParams = (AbsoluteLayout.LayoutParams) temp.getLayoutParams();
-		FrameLayout.LayoutParams relativeParams = (FrameLayout.LayoutParams) temp.getLayoutParams();
-		relativeParams.setMargins(-this.offsetLeft, -this.offsetTop, 0, 0); // llp.setMargins(left, top, right, bottom);
-//		relativeParams.width = 123;
-//		relativeParams.height = 123;
-		temp.setLayoutParams(relativeParams);*/
-		
 		
 		if (this.offsetLeft < -150) this.offsetLeft = -150;
 		if (this.offsetLeft > 200) this.offsetLeft = 200;
@@ -120,7 +98,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		if (this.offsetTop < -150) this.offsetTop = -150;
 		if (this.offsetTop > 200) this.offsetTop = 200;
 
-//		this.repaint();
+		this.repaint();
 		for (TileInterface<TM> tv : map) {
 			tv.updatePosition();
 		}

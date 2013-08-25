@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import net.zomis.custommap.view.ZomisTimer;
 
 public class SwingTimer extends ZomisTimer {
-	public SwingTimer(Integer delay, Runnable runnable) {
+	public SwingTimer(Integer delay, Runnable runnable) { // constructor needs to be dynamically invoked, that's why it's 'Integer' and not 'int'
 		super(delay, runnable);
 	}
 
@@ -15,15 +15,20 @@ public class SwingTimer extends ZomisTimer {
 
 	@Override
 	public void start() {
-		if (this._timer == null) this._timer = Executors.newSingleThreadScheduledExecutor();
+		if (this.runnable == null)
+			return;
+		if (this._timer == null) 
+			this._timer = Executors.newSingleThreadScheduledExecutor();
 		this._timer.scheduleAtFixedRate(this.runnable, this.delay, this.delay, TimeUnit.MILLISECONDS);
         this.running = true;
 	}
 
 	@Override
 	public void stop() {
-		if (this._timer != null) this._timer.shutdownNow();
+		if (this._timer != null) 
+			this._timer.shutdownNow();
         this.running = false;
+        this._timer = null;
 	}
 
 	@Override
@@ -31,5 +36,10 @@ public class SwingTimer extends ZomisTimer {
 		return this.running;
 	}
 	
-
+	@Override
+	public void setDelay(int delay) {
+		this.stop();
+		super.setDelay(delay);
+		this.start();
+	}
 }

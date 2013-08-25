@@ -101,17 +101,6 @@ public class ZomisList {
 			logFunction.log(e == null ? "null" : e.toString());
 	}
 	
-//	public static <E> void sortBy(List<E> list, String methodName) {
-//		sortBy(list, methodName, true);
-//	}
-//	
-//	public static <E> void sortBy(List<E> list, String methodName, boolean ascending) {
-//		if (list.size() == 0) return;
-//		
-//		BeanComparator<E> bc = new BeanComparator<E>(list.get(0).getClass(), "getValue", ascending);
-//		Collections.sort(list, bc);
-//	}
-	
 	public static interface GetKeyInterface<Element, Key> {
 		Key getKey(Element e);
 	}
@@ -137,14 +126,6 @@ public class ZomisList {
 		return result;
 		
 	}
-	// TODO: getExtreme method to find ONE highest/lowest.
-//	ZomisList.getExtreme(false, map.getGates(), new ZomisList.GetValueInterface<Gate>() {
-//	@Override
-//	public double getValue(Gate obj) {
-//		if (obj.getMicroWorld() == null) return null;
-//		return 0;
-//	}
-//});
 	
 	public static <K, V extends Comparable<? super V>> SortedSet<Map.Entry<K, V>> entriesSortedByValues(Map<K, V> map, final boolean descending) {
 		SortedSet<Map.Entry<K, V>> sortedEntries = new TreeSet<Map.Entry<K, V>>(
@@ -161,4 +142,5 @@ public class ZomisList {
 		sortedEntries.addAll(map.entrySet());
 		return sortedEntries;
 	}
+
 }

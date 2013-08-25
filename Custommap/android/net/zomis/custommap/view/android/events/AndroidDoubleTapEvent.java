@@ -1,10 +1,10 @@
 package net.zomis.custommap.view.android.events;
 
 import net.zomis.custommap.view.android.IAndroidGameView;
-import net.zomis.events.BaseEvent;
+import net.zomis.events.IEvent;
 import android.view.MotionEvent;
 
-public class AndroidDoubleTapEvent extends BaseEvent {
+public class AndroidDoubleTapEvent implements IEvent {
 
 	private MotionEvent	event;
 	private IAndroidGameView	mapView;

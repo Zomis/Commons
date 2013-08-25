@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 public class EventExecutor {
 	private static final Logger logger = LogManager.getLogger("Zomis");
-	private Map<Class<? extends BaseEvent>, Collection<EventHandler>> bindings;
+	private Map<Class<? extends IEvent>, Collection<EventHandler>> bindings;
 	private Set<EventListener> registeredListeners = new HashSet<EventListener>();
 	
 	private boolean debug = false;
@@ -25,10 +25,10 @@ public class EventExecutor {
 	}
 	
 	public EventExecutor() {
-		this.bindings = new HashMap<Class<? extends BaseEvent>, Collection<EventHandler>>();
+		this.bindings = new HashMap<Class<? extends IEvent>, Collection<EventHandler>>();
 	}
 	
-	public List<EventHandler> getListenersFor(Class<? extends BaseEvent> clazz) {
+	public List<EventHandler> getListenersFor(Class<? extends IEvent> clazz) {
 		if (!this.bindings.containsKey(clazz)) return new ArrayList<EventHandler>();
 		return new ArrayList<EventHandler>(this.bindings.get(clazz));
 	}
@@ -51,20 +51,18 @@ public class EventExecutor {
 		if (this != CustomFacade.getGlobalEvents())
 			CustomFacade.getGlobalEvents().executeEvent(event);
 		
-		if (this.debug) {
-			logger.info("Execute Event: " + event.getClass().getSimpleName());
-			CustomFacade.getLog().i("Execute Event: " + event.getClass().getSimpleName());
-		}
-		if (this.bindings == null) return event;
-		
 		Collection<EventHandler> handlers = null;
 		
 		handlers = this.bindings.get(event.getClass());
-		if (handlers == null) return event;
+		if (handlers == null) {
+			if (this.debug) {
+				logger.info("Event " + event.getClass().getSimpleName() + " has no handlers.");
+			}
+			return event;
+		}
 		
 		if (this.debug) {
-			logger.info("Events has " + handlers.size() + " handlers.");
-			CustomFacade.getLog().i("Execute Event: " + event.getClass().getSimpleName());
+			logger.info("Event " + event.getClass().getSimpleName() + " has " + handlers.size() + " handlers.");
 		}
 		for (EventHandler handler : handlers) {
 			if (handler == null) continue; // should not happen, but you never know...
@@ -77,7 +75,6 @@ public class EventExecutor {
 		}
 		return event;
 	}
-	
 	
 	public void registerListener(final EventListener listener) {
 		logger.info("Register event listener: " + listener);
@@ -104,9 +101,9 @@ public class EventExecutor {
 				continue;
 			}
 			
-			if (BaseEvent.class.isAssignableFrom(param)) {
+			if (IEvent.class.isAssignableFrom(param)) {
 				@SuppressWarnings("unchecked")
-				Class<? extends BaseEvent> realParam = (Class<? extends BaseEvent>) param;
+				Class<? extends IEvent> realParam = (Class<? extends IEvent>) param;
 
 				// Get the collection of all events of this class
 				if (!this.bindings.containsKey(realParam)) {
@@ -133,8 +130,8 @@ public class EventExecutor {
 	public void removeListener(EventListener listener) {
 		CustomFacade.getLog().w("// TODO: Fixa. Remove listener.");
 	}
-	public Map<Class<? extends BaseEvent>, Collection<EventHandler>> getBindings() {
-		return new HashMap<Class<? extends BaseEvent>, Collection<EventHandler>>(bindings);
+	public Map<Class<? extends IEvent>, Collection<EventHandler>> getBindings() {
+		return new HashMap<Class<? extends IEvent>, Collection<EventHandler>>(bindings);
 	}
 	public Set<EventListener> getRegisteredListeners() {
 		return new HashSet<EventListener>(registeredListeners);
