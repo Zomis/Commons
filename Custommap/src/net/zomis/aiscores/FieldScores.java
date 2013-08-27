@@ -1,7 +1,6 @@
 package net.zomis.aiscores;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,14 +11,16 @@ import java.util.SortedSet;
 import net.zomis.ZomisList;
 import net.zomis.ZomisUtils;
 
-public abstract class FieldScores<Params, Field> implements ScoreParameters<Params> {
+public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 	private List<AbstractScorer<Params, Field>> activeScorers;
 	private final ScoreConfig<Params, Field>	config;
 	private Map<Class<?>, Object> analyzes;
 
 	private final Map<Field, FieldScore<Field>> scores = new HashMap<Field, FieldScore<Field>>();
-	private Field[][] ranks;
+//	@Deprecated
+//	private Field[][] ranks;
 	private Params	params;
+	private ScoreStrategy<Params, Field>	strat;
 	
 	@SuppressWarnings("unchecked")
 	public <E> E getAnalyze(Class<E> clazz) {
@@ -27,9 +28,10 @@ public abstract class FieldScores<Params, Field> implements ScoreParameters<Para
 		return (E) this.analyzes.get(clazz);
 	}
 	
-	FieldScores(Params params, ScoreConfig<Params, Field> config) {
+	FieldScores(Params params, ScoreConfig<Params, Field> config, ScoreStrategy<Params, Field> strat) {
 		this.params = params;
 		this.config = config;
+		this.strat = strat;
 	}
 
 	void determineActiveScorers() {
@@ -45,8 +47,8 @@ public abstract class FieldScores<Params, Field> implements ScoreParameters<Para
 	}
 
 	void calculateMoveScores() {
-		for (Field field : this.getFieldsToScore()) {
-			if (!canScoreField(this, field))
+		for (Field field : this.strat.getFieldsToScore()) {
+			if (!this.strat.canScoreField(this, field))
 				continue;
 			
 			FieldScore<Field> fscore = new FieldScore<Field>(field);
@@ -59,52 +61,6 @@ public abstract class FieldScores<Params, Field> implements ScoreParameters<Para
 			scores.put(field, fscore);
 		}
 	}
-	public abstract Collection<Field> getFieldsToScore();
-
-	public abstract boolean canScoreField(ScoreParameters<Params> parameters, Field field);
-
-	/**
-	 * // TODO: Fixa This method needs cleanup.
-	 */
-//	@Deprecated
-	
-//	void calculateRankings() {
-////		public static ScoreField[][] scoresToRankings(Map<ScoreField, Double> scores) {
-//		SortedSet<Entry<Field, FieldScore<Field>>> sorted = ZomisList.entriesSortedByValues(scores, true);
-//			
-//		int index = 0;
-//		Double lastValue = null;
-//		for (Iterator<Entry<Field, FieldScore<Field>>> it = sorted.iterator(); it.hasNext();) {
-//			Entry<Field, FieldScore<Field>> ee = it.next();
-//			if (lastValue == null || ee.getValue().getScore() != lastValue.doubleValue()) {
-//				lastValue = ee.getValue().getScore();
-//				index++;
-//			}
-//		}
-//		int highestIndex = index;
-//
-//		ranks = new Field[highestIndex + 1][];
-//
-//		index = 0;
-//		List<Field> list = null;
-//		lastValue = null;
-//		for (Iterator<Entry<Field, FieldScore<Field>>> it = sorted.iterator(); it.hasNext();) {
-//			Entry<Field, FieldScore<Field>> ee = it.next();
-//			Field field = ee.getKey();
-//			if (lastValue == null || ee.getValue().getScore() != lastValue.doubleValue()) {
-//				lastValue = ee.getValue().getScore();
-//				if (list != null) {
-//					ranks[index - 1] = list.toArray(new Field[list.size()]);
-//				}
-//				index++;
-//				list = new ArrayList<Field>();
-//			}
-//			list.add(field);
-//		}
-//		if (list != null) {
-//			ranks[index - 1] = list.toArray(new Field[list.size()]);
-//		}
-//	}
 
 	void postHandle() {
 		for (PostScorer<Params, Field> post : this.config.getPostScorers()) {
@@ -117,8 +73,11 @@ public abstract class FieldScores<Params, Field> implements ScoreParameters<Para
 		return this.params;
 	}
 
-	public Field[][] getRankings() {
-		return this.ranks;
+//	public Field[][] getRankings() {
+//		return this.ranks;
+//	}
+	public List<List<FieldScore<Field>>> getRankedScores() {
+		return rankedScores;
 	}
 
 	public Map<Field, FieldScore<Field>> getScores() {
@@ -174,13 +133,12 @@ public abstract class FieldScores<Params, Field> implements ScoreParameters<Para
 	}
 
 	private List<List<FieldScore<Field>>> rankedScores;
+	
 	public void rankScores() {
 		SortedSet<Entry<Field, FieldScore<Field>>> sorted = ZomisList.entriesSortedByValues(this.scores, true);
 		rankedScores = new LinkedList<List<FieldScore<Field>>>();
-		if (sorted.isEmpty()) {
-			
+		if (sorted.isEmpty())
 			return;
-		}
 		double minScore = sorted.last().getValue().getScore();
 		double maxScore = sorted.first().getValue().getScore();
 		double lastScore = maxScore + 1;

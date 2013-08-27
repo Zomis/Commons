@@ -79,6 +79,12 @@ public class ZomisList {
 			if (!filter.shouldKeep(i)) it.remove();
 		}
 	}
+	public static <E> LinkedList<E> filter2(Collection<E> list, FilterInterface<E> filter) {
+		LinkedList<E> list2 = new LinkedList<E>(list);
+//		for (FilterInterface<E> filter : filters)
+		filter(list2, filter);
+		return list2;
+	}
 	public static <E> List<E> getAll(Iterable<E> list, FilterInterface<E> filter) {
 		List<E> result = new LinkedList<E>();
 		for (E e : list)

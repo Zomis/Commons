@@ -9,11 +9,13 @@ public abstract class AbstractScorer<Params, Field> extends Scorer {
 	public abstract boolean workWith(ScoreParameters<Params> scores);
 	public abstract double getScoreFor(Field field, ScoreParameters<Params> scores);
 	
-	protected static boolean hasProbability(double probability, double d) {
-		return Math.abs(probability - d) < 0.00001;
-	}
+	/**
+	 * Returns the value of getName()
+	 * 
+	 * @see #getName()
+	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		return this.getName();
 	}
 }

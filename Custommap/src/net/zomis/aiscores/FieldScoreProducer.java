@@ -3,25 +3,25 @@ package net.zomis.aiscores;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class FieldScoreProducer<Field, Params> {
+public class FieldScoreProducer<Params, Field> {
 	private final ScoreConfig<Params, Field> config;
 
 	private final Map<Class<?>, Object> analyzes;
 	private boolean analyzed;
 
-	private Params	params;
-	
-	public FieldScoreProducer(Params params, ScoreConfig<Params, Field> config) {
-		this.params = params;
+	private ScoreStrategy<Params, Field>	strat;
+
+	public FieldScoreProducer(ScoreConfig<Params, Field> config, ScoreStrategy<Params, Field> strat) {
 		this.config = config;
 		this.analyzes = new HashMap<Class<?>, Object>();
 		this.analyzed = false;
+		this.strat = strat;
 	}
 	
-	public FieldScores<Params, Field> score() {
+	public synchronized FieldScores<Params, Field> score(Params params) {
 		if (!this.analyzed) return null;
 		
-		FieldScores<Params, Field> scores = newFieldScores(this.params, config);
+		FieldScores<Params, Field> scores = new FieldScores<Params, Field>(params, config, strat);
 		scores.setAnalyzes(this.analyzes);
 		
 		scores.determineActiveScorers();
@@ -34,26 +34,38 @@ public abstract class FieldScoreProducer<Field, Params> {
 		
 		return scores;
 	}
-	protected abstract FieldScores<Params, Field> newFieldScores(Params params, ScoreConfig<Params, Field> config);
-
-	public boolean analyze() {
+	
+	@Deprecated
+	public synchronized ParamAndFieldList<Params, Field> analyzeAndGetBest(Params... params) {
+		// TODO: Find the best score for each param, then return the best rank and the param that produced the best rank. Intended to be used for: MFE AI make move (Weapon is part of param)
+		Map<Params, FieldScores<Params, Field>> allScores = new HashMap<Params, FieldScores<Params,Field>>();
+		for (Params param : params) {
+			this.analyze(param); // TODO: Make it possible to only analyze once
+			allScores.put(param, this.score(param));
+		}
+		throw new UnsupportedOperationException();
+	}
+	
+	
+	public synchronized boolean analyze(Params param) {
 		this.analyzed = false;
+		this.analyzes.clear();
 		for (PreScorer<Params> preScorers : this.config.getPreScorers()) {
-			Object data = preScorers.analyze(this.params);
+			Object data = preScorers.analyze(param);
 			if (data == null) return false;
 			this.analyzes.put(data.getClass(), data);
-//			Logger.getLogger(getClass()).info("Analyze data: " + data + " size is now " + this.analyzes.size(), new Exception());
 		}
 		
-//		if (this.config.getAnalyzeMethod().isZomisBasic()) {
-//			this.analyze = AnalyzeFactory.analyze(this.player.getMap(), this.config.getAnalyzeMethod().isZomisAdvanced());
-//			if (this.analyze == null) return false;
-//		}
 		this.analyzed = true;
 		return true;
 	}
 
 	public ScoreConfig<Params, Field> getConfig() {
 		return this.config;
+	}
+
+	public synchronized FieldScores<Params, Field> analyzeAndScore(Params params) {
+		this.analyze(params);
+		return this.score(params);
 	}
 }

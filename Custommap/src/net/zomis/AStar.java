@@ -220,6 +220,7 @@ public abstract class AStar<T>
 	 * <code>null</code> if a path doesn't exist.
 	 */
 	public List<T> compute(T start){
+		if (!mindists.isEmpty()) throw new IllegalStateException("Compute can only be called once.");
 		try{
 			Path root = new Path();
 			root.setPoint(start);

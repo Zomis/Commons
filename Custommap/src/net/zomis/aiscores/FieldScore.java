@@ -80,4 +80,9 @@ public class FieldScore<ScoreField> implements Comparable<FieldScore<ScoreField>
 	public Map<Scorer, Double> getScoreMap() {
 		return this.specificScorers;
 	}
+	
+	@Override
+	public String toString() {
+		return String.format("(%s score %f)", this.field, this.score);
+	}
 }
