@@ -3,6 +3,9 @@ package net.zomis.custommap;
 public class IntPoint {
     protected int x, y;
     
+    public IntPoint() {
+		this(0, 0);
+	}
     public IntPoint(IntPoint copy) {
         this(copy.x, copy.y);
     }
@@ -52,6 +55,14 @@ public class IntPoint {
     }
 	public void set(IntPoint value) {
 		this.set(value.x, value.y);
+	}
+	public int distanceSquared(IntPoint other) {
+		int dx = other.x - this.x;
+		int dy = other.y - this.y;
+		return dx*dx + dy*dy;
+	}
+	public double distance(IntPoint other) {
+		return Math.sqrt(distanceSquared(other));
 	}
 
 }

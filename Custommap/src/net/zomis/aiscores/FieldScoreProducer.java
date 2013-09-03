@@ -30,20 +30,21 @@ public class FieldScoreProducer<Params, Field> {
 		scores.rankScores();
 		scores.postHandle();
 		
-		// TODO: Call prescorer scoringComplete method to cleanup
+		for (PreScorer<Params> prescore : config.getPreScorers()) {
+			prescore.scoringComplete();
+		}
 		
 		return scores;
 	}
 	
-	@Deprecated
-	public synchronized ParamAndFieldList<Params, Field> analyzeAndGetBest(Params... params) {
+	public synchronized Map<Params, FieldScores<Params, Field>> scoreAll(Params... params) {
 		// TODO: Find the best score for each param, then return the best rank and the param that produced the best rank. Intended to be used for: MFE AI make move (Weapon is part of param)
 		Map<Params, FieldScores<Params, Field>> allScores = new HashMap<Params, FieldScores<Params,Field>>();
 		for (Params param : params) {
 			this.analyze(param); // TODO: Make it possible to only analyze once
 			allScores.put(param, this.score(param));
 		}
-		throw new UnsupportedOperationException();
+		return allScores;
 	}
 	
 	

@@ -2,7 +2,6 @@ package net.zomis.custommap.view.android;
 
 import java.io.File;
 
-import net.zomis.custommap.CustomFacade;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -33,7 +32,7 @@ public class AndroidUtils {
 	}
 
 	public static Bitmap loadBitmapFromView(View v) {
-		CustomFacade.getLog().i("View width " + v.getWidth() + " layoutparam width " + v.getLayoutParams().width);
+//		CustomFacade.getLog().i("View width " + v.getWidth() + " layoutparam width " + v.getLayoutParams().width);
 		int w = v.getWidth(); // v.getLayoutParams().width
 		int h = v.getHeight(); // v.getLayoutParams().height
 		Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);

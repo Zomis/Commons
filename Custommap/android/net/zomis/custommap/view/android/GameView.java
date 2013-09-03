@@ -86,7 +86,8 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		this.mapModel = model;
 		this.boardView = view;
 	    
-	    if (view != null) boardView.setOnLongClickListener(this);
+	    if (view != null) 
+	    	boardView.setOnLongClickListener(this);
 	    
 	    // Fix map
 	    this.map = new ArrayList<TileInterface<TM>>();
@@ -136,6 +137,9 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
         if (this.map != null) {
         	TileInterface<TM> tv;
         	tv = map.get(0);
+        	if (tv == null)
+        		return;
+        	
         	if (reset) this.scrollBounds = new Rect(tv.getX(), tv.getY(), tv.getX(), tv.getY());
 //        	CustomFacade.getLog().d("Up-Left   tv: " + tv.getX() + ", " + tv.getWidth() + ", " + tv.getY() + ", " + tv.getHeight() + " and " + tv.getWidth() * this.getScaleFactor());
         	this.scrollBounds.union(tv.getX(), tv.getY());

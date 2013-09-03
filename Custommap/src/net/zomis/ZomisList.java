@@ -52,6 +52,16 @@ public class ZomisList {
 		
 		return result;
 	}
+	public static interface ConversionInterface<E, F> {
+		F convert(E e);
+	}
+	public static <E, F> ArrayList<F> convert(List<E> list, ConversionInterface<E, F> conversion) {
+		ArrayList<F> alist = new ArrayList<F>(list.size());
+		for (E e : list) {
+			alist.add(conversion.convert(e));
+		}
+		return alist;
+	}
 	
 	public static <E> E getRandom(List<E> list) {
 		return getRandom(list, random);
@@ -147,6 +157,20 @@ public class ZomisList {
 		);
 		sortedEntries.addAll(map.entrySet());
 		return sortedEntries;
+	}
+
+	public static <E> E getOrNull(List<E> list, int index) {
+		if (list.size() > index)
+			return list.get(index);
+		else return null;
+	}
+	public static <A, B extends A> List<B> getSubclass(List<A> list, Class<B> clazz) {
+		List<B> result = new LinkedList<B>();
+		for (A unit : list) {
+			if (clazz.isAssignableFrom(unit.getClass()))
+				list.add(clazz.cast(unit));
+		}
+		return result;
 	}
 
 }

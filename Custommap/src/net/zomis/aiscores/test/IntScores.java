@@ -10,7 +10,7 @@ import net.zomis.aiscores.test.TestScore.Params;
 public class IntScores implements ScoreStrategy<Params, Integer> {
 
 	@Override
-	public Collection<Integer> getFieldsToScore() {
+	public Collection<Integer> getFieldsToScore(Params params) {
 		LinkedList<Integer> list = new LinkedList<Integer>();
 		for (int i = -10; i <= 10000; i++) {
 			list.add(i);

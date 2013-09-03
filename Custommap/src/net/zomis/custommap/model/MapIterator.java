@@ -22,11 +22,13 @@ public class MapIterator<E> implements Iterator<E>, IteratorStatus {
 		this.array = array;
 		this.x = 0;
 		this.y = 0;
-		if (array != null) {
-//			this.xrow = array[0];
-		}
 	}
 
+	public void reset() {
+		this.x = 0;
+		this.y = 0;
+	}
+	
 	public boolean hasNext() {
 		if (this.array == null) return false;
 		if (y >= this.array[x].length) return false;

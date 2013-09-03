@@ -17,10 +17,6 @@ public abstract class GenericMapModel<TM> implements Iterable<TM> {
 	
 	public int getMapHeight() { return this.mapHeight; }
 	
-	public int getMapTotalSize() {
-		return this.getMapWidth() * this.getMapHeight();
-	}
-	
     public int getMapWidth() { return this.mapWidth; }
     
 	public boolean hasMap() { return this.map != null; }

@@ -15,6 +15,7 @@ public class FieldScore<ScoreField> implements Comparable<FieldScore<ScoreField>
 		this.field = field;
 	}
 
+	@Deprecated
 	public FieldScore(FieldScore<ScoreField> copy) {
 		this.field = copy.field;
 		if (copy.specificScorers != null)

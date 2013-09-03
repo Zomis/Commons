@@ -23,7 +23,7 @@ public class ZomisAndroidLog4j {
     	async.addAppender(socket);
     	root.addAppender(async);
 	}
-    public static void log4jConfigure(String externalLogFileName, Level defaultLevel) {
+    public static void log4jConfigure(Level defaultLevel) {
     	Logger root = Logger.getRootLogger();
     	Layout layout = new PatternLayout(DEFAULT_LAYOUT);
     	root.addAppender(new LogCatAppender(layout));

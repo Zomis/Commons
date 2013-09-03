@@ -47,7 +47,7 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 	}
 
 	void calculateMoveScores() {
-		for (Field field : this.strat.getFieldsToScore()) {
+		for (Field field : this.strat.getFieldsToScore(params)) {
 			if (!this.strat.canScoreField(this, field))
 				continue;
 			
@@ -168,6 +168,7 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 	 * @return
 	 */
 	public List<FieldScore<Field>> getRank(int rank) {
+		if (rankedScores.isEmpty()) return null;
 		return rankedScores.get(rank - 1);
 	}
 

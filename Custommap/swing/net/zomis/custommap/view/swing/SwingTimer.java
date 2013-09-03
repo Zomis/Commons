@@ -38,8 +38,10 @@ public class SwingTimer extends ZomisTimer {
 	
 	@Override
 	public void setDelay(int delay) {
+		boolean wasRunning = this.isRunning();
 		this.stop();
 		super.setDelay(delay);
-		this.start();
+		if (wasRunning)
+			this.start();
 	}
 }

@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.zomis.custommap.CustomFacade;
@@ -128,7 +130,15 @@ public class EventExecutor {
 	}
 
 	public void removeListener(EventListener listener) {
-		CustomFacade.getLog().w("// TODO: Fixa. Remove listener.");
+		for (Entry<Class<? extends IEvent>, Collection<EventHandler>> ee : bindings.entrySet()) {
+			Iterator<EventHandler> it = ee.getValue().iterator();
+			while (it.hasNext()) {
+				EventHandler curr = it.next();
+				if (curr.getListener() == listener) 
+					it.remove();
+			}
+		}
+		this.registeredListeners.remove(listener);
 	}
 	public Map<Class<? extends IEvent>, Collection<EventHandler>> getBindings() {
 		return new HashMap<Class<? extends IEvent>, Collection<EventHandler>>(bindings);
