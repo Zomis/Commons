@@ -12,7 +12,7 @@ import android.view.View.OnClickListener;
  * 
  * @see TileModel
  **/
-public abstract class TileView<TM extends ITileModel<TM>, MM extends GameView<TM>> extends MapPaintable implements OnClickListener, TileInterface<TM> {
+public abstract class TileView<TM extends ITileModel<?>, MM extends GameView<? extends TM>> extends MapPaintable implements OnClickListener, TileInterface<TM> {
 	protected TM model;
 	protected final MM mapView;
 	
@@ -30,8 +30,10 @@ public abstract class TileView<TM extends ITileModel<TM>, MM extends GameView<TM
 		this.mapView = mapView;
 		this.model = model;
 		
-		this.x = this.model.getX() * mapView.tileSize;
-		this.y = this.model.getY() * mapView.tileSize;
+		if (mapView != null) {
+			this.x = this.model.getX() * mapView.tileSize;
+			this.y = this.model.getY() * mapView.tileSize;
+		}
 		this.updatePosition();
 		if (this.image != null) {
 //			this.image.setOnLongClickListener(this);// MapPaintable does this.

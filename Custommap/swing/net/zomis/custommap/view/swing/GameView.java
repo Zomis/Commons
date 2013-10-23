@@ -18,7 +18,7 @@ import net.zomis.custommap.view.general.ViewObject;
  * @author Zomis
  *
  */
-public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements ISwingGameView {// extends ViewGroup, or View?
+public abstract class GameView<TM extends ITileModel<?>> extends ViewContainer<TM> implements ISwingGameView {// extends ViewGroup, or View?
 	public transient JComponent boardView;
 	
 	protected GenericMapModel<TM> mapModel;

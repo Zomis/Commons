@@ -31,6 +31,11 @@ public class CustomFacade implements EventListener {
 	}
 	
 	public CustomFacade(ZomisLog log) {
+		if (isInitialized()) {
+			logger.w("CustomFacade already initialized. This is likely to produce bugs.");
+			new IllegalStateException("CustomFacade already initialized. This is likely to produce bugs.").printStackTrace();
+		}
+		
 		instance = this;
 		logger = log;
 		logger.i("CustomFacade initialized");
@@ -45,13 +50,6 @@ public class CustomFacade implements EventListener {
 	}
 
     protected static CustomFacade instance = null;
-
-    @Deprecated
-    private static int nextId = 1;
-    @Deprecated
-    public static int getNextID() {
-    	return nextId++;
-    }
 
     public static boolean isInitialized() {
     	return instance != null;
@@ -81,14 +79,6 @@ public class CustomFacade implements EventListener {
     	this.timerClass = timerClass;
     	return this;
     }
-	public static <T> T objAs(Object object, Class<T> to) {
-		if (object == null) return null;
-		
-        if (to.isAssignableFrom(object.getClass())) {
-            return to.cast(object);
-        }
-        return null;
-	}
 	public CustomFacade setTag(String tag) {
 		this.tag = tag;
     	return this;

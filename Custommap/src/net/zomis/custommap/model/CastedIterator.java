@@ -2,11 +2,15 @@ package net.zomis.custommap.model;
 
 import java.util.Iterator;
 
-public class CastedIterator<E, Q> implements Iterator<Q>, Iterable<Q> {
-	private Iterator<E> iterator;
+public class CastedIterator<FromClass, ToClass> implements Iterator<ToClass>, Iterable<ToClass> {
+	// Can't use `ToClass extends FromClass` because it can be used to implement an iterator which is actually *ToClass super FromClass" -- which cannot be declared in the class
+	private Iterator<FromClass> iterator;
 
-	public CastedIterator(Iterator<E> iterator) {
+	public CastedIterator(Iterator<FromClass> iterator) {
 		this.iterator = iterator;
+	}
+	public CastedIterator(Iterable<FromClass> iterable) {
+		this(iterable.iterator());
 	}
 
 	public boolean hasNext() {
@@ -14,8 +18,8 @@ public class CastedIterator<E, Q> implements Iterator<Q>, Iterable<Q> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Q next() {
-		return (Q) this.iterator.next();
+	public ToClass next() {
+		return (ToClass) this.iterator.next();
 	}
 
 	public void remove() {
@@ -23,7 +27,7 @@ public class CastedIterator<E, Q> implements Iterator<Q>, Iterable<Q> {
 	}
 
 	@Override
-	public Iterator<Q> iterator() {
+	public Iterator<ToClass> iterator() {
 		return this;
 	}
 }

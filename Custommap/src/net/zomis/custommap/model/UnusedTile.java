@@ -7,10 +7,6 @@ public class UnusedTile implements ITileModel<UnusedTile> {
 	public UnusedTile getRelative(int dx, int dy) {
 		return null;
 	}
-	@Override
-	public String getCoordinateString() {
-		return null;
-	}
 
 	@Override
 	public int getX() {

@@ -63,7 +63,8 @@ public abstract class GenericMapModel<TM> implements Iterable<TM> {
 
 	public void javaGarbage() {
 		if (this.map != null) {
-			for (List<?> list : this.map) list.clear();
+			for (List<?> list : this.map)
+				list.clear();
 			this.map.clear();
 			this.map = null;
 		}

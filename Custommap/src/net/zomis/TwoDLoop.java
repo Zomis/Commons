@@ -9,7 +9,6 @@ public class TwoDLoop implements Iterator<IteratorStatus>, Iterable<IteratorStat
 	private int x;
 	private int y;
 	private int	startX;
-//	private int	startY;
 	private int	endX;
 	private int	endY;
 	private int	lastIndexX;
@@ -17,8 +16,7 @@ public class TwoDLoop implements Iterator<IteratorStatus>, Iterable<IteratorStat
 	
 	public TwoDLoop(int startX, int startY, int endX, int endY) {
 		this.startX = startX;
-//		this.startY = startY;
-//		this.x = startX - 1;
+		this.x = startX;
 		this.y = startY;
 		this.endX = endX;
 		this.endY = endY;
@@ -39,7 +37,7 @@ public class TwoDLoop implements Iterator<IteratorStatus>, Iterable<IteratorStat
 
 	@Override
 	public boolean isNextLineBreak() {
-		return this.x == this.endX;
+		return this.lastIndexX == this.endX;
 	}
 
 	@Override

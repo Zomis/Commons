@@ -1,18 +1,23 @@
 package net.zomis.aiscores;
 
 public class ParamAndField<Params, Field> {
-	private Params	params;
-	private Field	field;
+	private final Params	params;
+	private final Field	field;
+	private final FieldScore<Field>	fieldScore;
 
-	public ParamAndField(Params params, Field field) {
+	public ParamAndField(Params params, FieldScore<Field> field) {
 		this.params = params;
-		this.field = field;
+		this.fieldScore = field;
+		this.field = field.getField();
 	}
 	public Field getField() {
 		return field;
 	}
 	public Params getParams() {
 		return params;
+	}
+	public FieldScore<Field> getFieldScore() {
+		return fieldScore;
 	}
 	@Override
 	public String toString() {

@@ -17,8 +17,7 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 	private Map<Class<?>, Object> analyzes;
 
 	private final Map<Field, FieldScore<Field>> scores = new HashMap<Field, FieldScore<Field>>();
-//	@Deprecated
-//	private Field[][] ranks;
+	
 	private Params	params;
 	private ScoreStrategy<Params, Field>	strat;
 	
@@ -35,10 +34,11 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 	}
 
 	void determineActiveScorers() {
-		if (activeScorers != null) throw new IllegalStateException();
+		if (activeScorers != null)
+			throw new IllegalStateException();
 		
 		activeScorers = new ArrayList<AbstractScorer<Params, Field>>();
-			
+
 		for (AbstractScorer<Params, Field> scorer : config.getScorers().keySet()) {
 			if (scorer.workWith(this)) {
 				activeScorers.add(scorer);
@@ -52,9 +52,7 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 				continue;
 			
 			FieldScore<Field> fscore = new FieldScore<Field>(field);
-//			ProbabilityKnowledge<Field> data = this.analyze == null ? null : this.analyze.getKnowledgeFor(field);
 			for (AbstractScorer<Params, Field> scorer : activeScorers) {
-//				double lastScore = scorer.getScoreFor(field, data, this);
 				double lastScore = scorer.getScoreFor(field, this);
 				fscore.addScore(scorer, lastScore, this.config.getScorers().get(scorer));
 			}

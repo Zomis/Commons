@@ -21,7 +21,7 @@ import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
-public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<TM> implements IAndroidGameView, OnTouchListener, OnLongClickListener {
+public abstract class GameView<TM extends ITileModel<?>> extends ViewContainer<TM> implements IAndroidGameView, OnTouchListener, OnLongClickListener {
 	private ViewGroup boardView;
 	
 	protected GenericMapModel<TM> mapModel;
@@ -49,7 +49,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 		if (this.map == null) return 0.1f;
 		
 		int minWH = Math.min(this.boardView.getWidth(), this.boardView.getHeight());
-//		CustomFacade.getLog().d("GameView.getMinScaleFactor: minWH = " + minWH);
+		CustomFacade.getLog().d("GameView.getMinScaleFactor: minWH = " + minWH + " size is " + boardView.getWidth() + " x " + boardView.getHeight());
 //		CustomFacade.getLog().d("GameView.getMinScaleFactor: tileSize = " + this.getTileSizeReal());
 //		CustomFacade.getLog().d("GameView.getMinScaleFactor: scrollBounds = " + this.scrollBounds.toString());
 
@@ -98,6 +98,7 @@ public abstract class GameView<TM extends ITileModel<TM>> extends ViewContainer<
 	    	while (it.hasNext()) {
 	    		TM tm = it.next();
 	    		TileInterface<TM> tv = newTileView(this, tm);
+	    		// TODO: Overridable method call in constructor -- use an `initMap` method like the map model?
 				map.add(tv);
 	    	}
 	    	

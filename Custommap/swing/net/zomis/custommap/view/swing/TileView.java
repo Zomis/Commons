@@ -15,7 +15,7 @@ import net.zomis.custommap.view.swing.events.CustommapSwingTileClick;
  * 
  * @see TileModel
  **/
-public abstract class TileView<TM extends ITileModel<TM>> extends MapPaintable implements TileInterface<TM> {
+public abstract class TileView<TM extends ITileModel<?>> extends MapPaintable implements TileInterface<TM> {
 	protected TM model;
 	
 	public TileView(ISwingGameView mapView, TM model) {

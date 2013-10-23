@@ -47,15 +47,6 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
 			this.setSize(g.getTileSizeScaled());
 		}
 //		updatePosition();
-		/*
-		 * Constructors must not invoke overridable methods, directly or
-		 * indirectly. If you violate this rule, program failure will result.
-		 * The superclass constructor runs before the subclass constructor, so
-		 * the overriding method in the subclass will be invoked before the
-		 * subclass constructor has run. If the overriding method depends on any
-		 * initialization performed by the subclass constructor, the method will
-		 * not behave as expected.
-		 */
 	}
 	public int getHeight() {
 		return this.size;

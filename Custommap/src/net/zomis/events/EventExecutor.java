@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.zomis.custommap.CustomFacade;
 
@@ -31,22 +32,9 @@ public class EventExecutor {
 	}
 	
 	public List<EventHandler> getListenersFor(Class<? extends IEvent> clazz) {
-		if (!this.bindings.containsKey(clazz)) return new ArrayList<EventHandler>();
+		if (!this.bindings.containsKey(clazz)) 
+			return new ArrayList<EventHandler>();
 		return new ArrayList<EventHandler>(this.bindings.get(clazz));
-	}
-
-	@Deprecated
-	public CancellableEvent executeCancellableEvent(CancellableEvent event) {
-		if (this != CustomFacade.getGlobalEvents())
-			CustomFacade.getGlobalEvents().executeCancellableEvent(event);
-		
-		if (event instanceof BaseEvent) {
-			this.executeEvent((BaseEvent) event);
-			if (event.isCancelled()) {
-				logger.info(event.toString() + " cancelled!");
-			}
-		}
-		return event;
 	}
 	
 	public <T extends IEvent> T executeEvent(T event) {
@@ -58,13 +46,13 @@ public class EventExecutor {
 		handlers = this.bindings.get(event.getClass());
 		if (handlers == null) {
 			if (this.debug) {
-				logger.info("Event " + event.getClass().getSimpleName() + " has no handlers.");
+				CustomFacade.getLog().i("Event " + event.getClass().getSimpleName() + " has no handlers.");
 			}
 			return event;
 		}
 		
 		if (this.debug) {
-			logger.info("Event " + event.getClass().getSimpleName() + " has " + handlers.size() + " handlers.");
+			CustomFacade.getLog().i("Event " + event.getClass().getSimpleName() + " has " + handlers.size() + " handlers.");
 		}
 		for (EventHandler handler : handlers) {
 			if (handler == null) continue; // should not happen, but you never know...
@@ -79,8 +67,9 @@ public class EventExecutor {
 	}
 	
 	public void registerListener(final EventListener listener) {
-		logger.info("Register event listener: " + listener);
-		if (this.bindings == null) throw new NullPointerException("No bindings on MinesweeperEvents has been created.");
+		CustomFacade.getLog().v("Register event listener: " + listener);
+		if (this.bindings == null) 
+			throw new NullPointerException("No bindings has been created.");
 		
 		if (this.registeredListeners.contains(listener)) {
 			CustomFacade.getLog().w("Listener already registred: " + listener);
@@ -91,7 +80,10 @@ public class EventExecutor {
 		this.registeredListeners.add(listener);
 		for (final Method method : methods) {
 			Event annotation = method.getAnnotation(Event.class);
-			if (annotation == null) continue;
+			if (annotation == null) {
+//				logger.debug("Method does not have Event annotation: " + method.getName());
+				continue;
+			}
 			
 			Class<?>[] parameters = method.getParameterTypes();
 			if (parameters.length != 1) continue;
@@ -99,7 +91,7 @@ public class EventExecutor {
 			Class<?> param = parameters[0];
 			
 			if (!method.getReturnType().equals(void.class)) {
-				logger.warn("Ignoring method due to non-void return: " + method.getName());
+				CustomFacade.getLog().w("Ignoring method due to non-void return: " + method.getName());
 				continue;
 			}
 			
@@ -109,12 +101,12 @@ public class EventExecutor {
 
 				// Get the collection of all events of this class
 				if (!this.bindings.containsKey(realParam)) {
-					this.bindings.put(realParam, new HashSet<EventHandler>());
+					this.bindings.put(realParam, new TreeSet<EventHandler>());
 				}
 				Collection<EventHandler> set = this.bindings.get(realParam);
 
 				// Create a new event handler and add it to the collection
-				logger.info("Add listener method: " + method.getName() + " for event " + realParam.getSimpleName());
+				CustomFacade.getLog().v("Add listener method: " + method.getName() + " for event " + realParam.getSimpleName());
 				set.add(createEventHandler(method, listener, annotation));
 			}
 		}

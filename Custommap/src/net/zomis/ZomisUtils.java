@@ -187,7 +187,11 @@ public class ZomisUtils {
 	public static Class<?> classFor(Object data) {
 		return data == null ? null : data.getClass();
 	}
-	
+	/**
+	 * Gets the seed of a {@link Random}-object given it's current state (Note that the seed value changes for each call to one of the Random.next-methods)
+	 * @param random Random object
+	 * @return The seed of the current state of the {@link Random}-object.
+	 */
 	public static long getSeed(Random random) {
 		byte[] ba0, ba1, bar;
 		try {
@@ -227,4 +231,16 @@ public class ZomisUtils {
 	public static boolean doubleEqual(double a, double b, double epsilon) {
 		return Math.abs(a - b) <= epsilon;
 	}
+	public static <T> T objAs(Object object, Class<T> to) {
+		if (object == null) return null;
+		
+        if (to.isAssignableFrom(object.getClass())) {
+            return to.cast(object);
+        }
+        return null;
+	}
+	public static String capitalize(String str) {
+		return ZomisUtils.substr(str, 0, 1).toUpperCase() + ZomisUtils.substr(str, 1).toLowerCase();
+	}
+	
 }

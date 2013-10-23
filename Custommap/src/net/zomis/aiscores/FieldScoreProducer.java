@@ -19,7 +19,8 @@ public class FieldScoreProducer<Params, Field> {
 	}
 	
 	public synchronized FieldScores<Params, Field> score(Params params) {
-		if (!this.analyzed) return null;
+		if (!this.analyzed) 
+			return null;
 		
 		FieldScores<Params, Field> scores = new FieldScores<Params, Field>(params, config, strat);
 		scores.setAnalyzes(this.analyzes);
@@ -41,7 +42,7 @@ public class FieldScoreProducer<Params, Field> {
 		// TODO: Find the best score for each param, then return the best rank and the param that produced the best rank. Intended to be used for: MFE AI make move (Weapon is part of param)
 		Map<Params, FieldScores<Params, Field>> allScores = new HashMap<Params, FieldScores<Params,Field>>();
 		for (Params param : params) {
-			this.analyze(param); // TODO: Make it possible to only analyze once
+			this.analyze(param); // TODO: Make it possible to only analyze once. Possibly include analyze data as part of param(!)
 			allScores.put(param, this.score(param));
 		}
 		return allScores;

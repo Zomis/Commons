@@ -7,7 +7,6 @@ package net.zomis.custommap.model;
  */
 public interface ITileModel<TM> {
 	TM getRelative(int dx, int dy);
-	String getCoordinateString();
 	int getX();
 	int getY();
 }

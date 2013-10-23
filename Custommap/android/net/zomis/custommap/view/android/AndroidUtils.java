@@ -35,7 +35,7 @@ public class AndroidUtils {
 //		CustomFacade.getLog().i("View width " + v.getWidth() + " layoutparam width " + v.getLayoutParams().width);
 		int w = v.getWidth(); // v.getLayoutParams().width
 		int h = v.getHeight(); // v.getLayoutParams().height
-		Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+		Bitmap b = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_4444);
 		Canvas c = new Canvas(b);
 		v.layout(0, 0, w, h);
 		v.draw(c);

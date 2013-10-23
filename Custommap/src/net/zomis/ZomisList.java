@@ -29,6 +29,20 @@ public class ZomisList {
 		 */
 		boolean shouldKeep(E obj);
 	}
+	public static class IsClassFilter implements FilterInterface<Object> {
+
+		private Class<?> clazz;
+		
+		public IsClassFilter(Class<?> clazz) {
+			this.clazz = clazz;
+		}
+		
+		@Override
+		public boolean shouldKeep(Object obj) {
+			return obj == null ? false : clazz.isAssignableFrom(obj.getClass());
+		}
+		
+	}
 	
 	public static interface GetValueInterface<E> {
 		double getValue(E obj);
@@ -82,25 +96,27 @@ public class ZomisList {
 		return list[random.nextInt(list.length)];
 	}
 	
-	public static <E> void filter(Collection<E> list, FilterInterface<E> filter) {
+	public static <E> void filter(Collection<E> list, FilterInterface<? super E> filter) {
 		Iterator<E> it = list.iterator();
 		while (it.hasNext()) {
 			E i = it.next();
 			if (!filter.shouldKeep(i)) it.remove();
 		}
 	}
-	public static <E> LinkedList<E> filter2(Collection<E> list, FilterInterface<E> filter) {
+	public static <E> LinkedList<E> filter2(Collection<E> list, FilterInterface<? super E> filter) {
 		LinkedList<E> list2 = new LinkedList<E>(list);
 //		for (FilterInterface<E> filter : filters)
 		filter(list2, filter);
 		return list2;
 	}
-	public static <E> List<E> getAll(Iterable<E> list, FilterInterface<E> filter) {
+	public static <E> List<E> getAll(Iterable<E> list, FilterInterface<? super E> filter) {
+		// TODO: Is there any real difference between ZomisList.filter2 and ZomisList.getAll ?
 		List<E> result = new LinkedList<E>();
 		for (E e : list)
 			if (filter.shouldKeep(e)) result.add(e);
 		return result;
 	}
+	@Deprecated
 	public static <E> boolean contains(Iterable<E> list, FilterInterface<E> filter) {
 		return !getAll(list, filter).isEmpty();
 	}
@@ -108,10 +124,12 @@ public class ZomisList {
 		return getAll(list, filter).size();
 	}
 	
+	@Deprecated
 	public static interface LogInterface {
 		public void log(String string);
 	}
 	
+	@Deprecated
 	public static <E> void logArray(Iterable<E> list, LogInterface logFunction) {
 		for (E e : list)
 			logFunction.log(e == null ? "null" : e.toString());
@@ -168,9 +186,57 @@ public class ZomisList {
 		List<B> result = new LinkedList<B>();
 		for (A unit : list) {
 			if (clazz.isAssignableFrom(unit.getClass()))
-				list.add(clazz.cast(unit));
+				result.add(clazz.cast(unit));
 		}
 		return result;
 	}
 
+	public static class FilterOR<E> implements FilterInterface<E> {
+		private List<FilterInterface<E>> filters = new LinkedList<ZomisList.FilterInterface<E>>();
+		public FilterOR() {
+		}
+		public FilterOR<E> addFilter(FilterInterface<E> filter) {
+			this.filters.add(filter);
+			return this;
+		}
+		
+		@Override
+		public boolean shouldKeep(E obj) {
+			for (FilterInterface<E> filter : filters)
+				if (filter.shouldKeep(obj))
+					return true;
+			return false;
+		}
+	}
+	public static class FilterAND<E> implements FilterInterface<E> {
+		private List<FilterInterface<E>> filters = new LinkedList<ZomisList.FilterInterface<E>>();
+		public FilterAND() {
+		}
+		public FilterAND<E> addFilter(FilterInterface<E> filter) {
+			this.filters.add(filter);
+			return this;
+		}
+		
+		@Override
+		public boolean shouldKeep(E obj) {
+			for (FilterInterface<E> filter : filters)
+				if (!filter.shouldKeep(obj))
+					return false;
+			return true;
+		}
+	}
+	public static class FilterXOR<E> implements FilterInterface<E> {
+		private final FilterInterface<E> filterA;
+		private final FilterInterface<E> filterB;
+		public FilterXOR(FilterInterface<E> filterA, FilterInterface<E> filterB) {
+			this.filterA = filterA;
+			this.filterB = filterB;
+		}
+		
+		@Override
+		public boolean shouldKeep(E obj) {
+			return filterA.shouldKeep(obj) ^ filterB.shouldKeep(obj);
+		}
+	}
+	
 }
