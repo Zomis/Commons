@@ -3,6 +3,7 @@ package net.zomis.custommap.view.swing;
 import java.awt.event.ActionListener;
 
 import javax.swing.Action;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
@@ -23,6 +24,9 @@ public class MenuItemBuilder {
 	public MenuItemBuilder setShortcut(KeyStroke keyStroke) {
 		item.setAccelerator(keyStroke);
 		return this;
+	}
+	public void addToMenu(JMenu menu) {
+		menu.add(item);
 	}
 	
 }

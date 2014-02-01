@@ -49,7 +49,7 @@ public abstract class GameView<TM extends ITileModel<?>> extends ViewContainer<T
 		if (this.map == null) return 0.1f;
 		
 		int minWH = Math.min(this.boardView.getWidth(), this.boardView.getHeight());
-		CustomFacade.getLog().d("GameView.getMinScaleFactor: minWH = " + minWH + " size is " + boardView.getWidth() + " x " + boardView.getHeight());
+//		CustomFacade.getLog().d("GameView.getMinScaleFactor: minWH = " + minWH + " size is " + boardView.getWidth() + " x " + boardView.getHeight());
 //		CustomFacade.getLog().d("GameView.getMinScaleFactor: tileSize = " + this.getTileSizeReal());
 //		CustomFacade.getLog().d("GameView.getMinScaleFactor: scrollBounds = " + this.scrollBounds.toString());
 
@@ -61,7 +61,7 @@ public abstract class GameView<TM extends ITileModel<?>> extends ViewContainer<T
 			return retur;
 		}
 		
-		CustomFacade.getLog().e("GameView.getMinScaleFactor: return WRONG " + 0.3);
+		CustomFacade.getLog().e("GameView.getMinScaleFactor: returning default (incorrect) value");
 		return 0.3f;
 	}
 	
@@ -180,20 +180,8 @@ public abstract class GameView<TM extends ITileModel<?>> extends ViewContainer<T
 		return false;
 	}
 	
-	/**
-	 * PerformClick variable is used to prevent clicking while scrolling 
-	 */
-	boolean performClick = false;
-	
-	@Deprecated
-	private View lastView;
-	@Deprecated
-	public View getLastTouchedView() { return this.lastView; }
-	
 	@Override
 	public boolean onTouch(View view, MotionEvent event) {
-//		CustomFacade.getLog().v("GameView: onTouch: " + event.toString());
-		this.lastView = view;// separating MapPaintable scrolling from layout scrolling.
 		gestureScanner.onTouchEvent(event);
     	if (mScaleDetector != null) mScaleDetector.onTouchEvent(event);
 		return false;
@@ -212,38 +200,6 @@ public abstract class GameView<TM extends ITileModel<?>> extends ViewContainer<T
 	}
 	
 	protected Rect scrollBounds;
-	
-	@Deprecated
-	public void scroll(float distanceX, float distanceY) {
-		if (!this.scrollEnabled) return;
-		
-		this.performClick = false;
-		
-		this.boardView.scrollBy((int)distanceX, (int)distanceY);	// use this ???
-//		v.requestLayout()						// maybe make this as a real layout sometime?
-//		v.requestRectangleOnScreen(rectangle)	// is this what I think it is? show a specific portion of the screen?
-
-		CustomFacade.getLog().v("ScrollBounds is: " + this.scrollBounds);
-		CustomFacade.getLog().v("BoardView Width and Height: " + this.boardView.getWidth() + ", " + this.boardView.getHeight());
-		int scrollX = this.boardView.getScrollX();
-		int scrollY = this.boardView.getScrollY();
-		CustomFacade.getLog().v("ScrollX and Y is before adjustment: " + scrollX + ", " + scrollY);
-
-		if (scrollX < scrollBounds.left) scrollX = scrollBounds.left;
-		if (scrollX > scrollBounds.right - this.boardView.getWidth()) scrollX = scrollBounds.right - this.boardView.getWidth(); // scroll as far right as possible
-		
-		if (scrollY < scrollBounds.top) scrollY = scrollBounds.top;
-		if (scrollY > scrollBounds.bottom - this.boardView.getHeight()) scrollY = scrollBounds.bottom - this.boardView.getHeight(); // scroll as far down as possible
-
-		CustomFacade.getLog().v("ScrollX and Y is after adjustment: " + scrollX + ", " + scrollY);
-		
-//		Tejpbit's centering code * scrollToX = scrollToY = (gameFunction.layout.getWidth() / 2)*(-1) + ((gameFunction.getSquareSize() * (gameFunction.MapSizeX )/2) ) + (gameFunction.getSquareSize()/2);
-
-		
-		this.boardView.scrollTo(scrollX, scrollY);
-
-//		CustomFacade.getLog().v(String.format("Scroll is now %d, %d", scrollX, scrollY));
-	}
 	
     public void addViewObject(ViewObject object) {
     	if (object == null) throw new IllegalArgumentException("View object is null");// will this be caught anywhere ?
@@ -272,14 +228,4 @@ public abstract class GameView<TM extends ITileModel<?>> extends ViewContainer<T
 	public Rect getScrollBounds() {
 		return this.scrollBounds;
 	}
-	@Override
-	public void setPerformClick(boolean value) {
-		this.performClick = value;
-	}
-
-	@Override
-	public boolean getPerformClick() {
-		return this.performClick;
-	}
-
 }

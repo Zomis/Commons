@@ -51,4 +51,8 @@ public class Log4jLog extends ZomisLog {
 	public void e(String tag, String data) {
 		logger.log(callerFQCN, Level.ERROR, data, null);
 	}
+	@Override
+	public void e(String msg, Throwable exception) {
+		logger.log(Level.ERROR, msg, exception);
+	}
 }

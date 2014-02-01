@@ -5,15 +5,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import net.zomis.IndexIterator;
+import net.zomis.IndexIteratorStatus;
+
 /**
  * 
  * @author Zomis
  *
  */
-public abstract class GenericMapModel<TM> implements Iterable<TM> {
+public abstract class GenericMapModel<TM extends Garbagable> implements Iterable<TM> {
 	protected List<List<TM>> map;
-	protected int mapHeight = 5;
-	protected int mapWidth = 5;
+	private int mapHeight = 5;
+	private int mapWidth = 5;
+	
+	protected void setMapWidth(int mapWidth) {
+		this.mapWidth = mapWidth;
+	}
+	protected void setMapHeight(int mapHeight) {
+		this.mapHeight = mapHeight;
+	}
 	
 	public int getMapHeight() { return this.mapHeight; }
 	
@@ -43,7 +53,7 @@ public abstract class GenericMapModel<TM> implements Iterable<TM> {
 		return new MapListIterator<TM>(this.map);
 	}
 
-	public abstract TM newTile(GenericMapModel<TM> map, int x, int y);
+	protected abstract TM newTile(GenericMapModel<TM> map, int x, int y);
 
 	public TM pos(int xpos, int ypos) {
 		if (map == null) return null;
@@ -60,7 +70,57 @@ public abstract class GenericMapModel<TM> implements Iterable<TM> {
 		int y = random.nextInt(this.mapHeight);
 		return pos(x, y);
 	}
+	
+	protected void changeSize(int newWidth, int newHeight) {
+		int numAddWidth = newWidth - getMapWidth();
+		
+		if (numAddWidth >= 0) {
+			ensureExistingHeights(newHeight);
+			for (int i = 0; i < numAddWidth; i++) {
+				List<TM> list = new ArrayList<TM>(newHeight);
+				for (int yy = 0; yy < newHeight; yy++) {
+					TM tm = newTile(this, getMapWidth() + i, yy);
+					list.add(tm);
+				}
+				map.add(list);
+			}
+		}
+		else {
+			for (int i = 0; i < -numAddWidth; i++) {
+				List<TM> list = map.get(newWidth + i);
+				for (TM bt : list)
+					bt.javaGarbage();
+				list.clear();
+			}
+			for (int i = 0; i < -numAddWidth; i++) {
+				map.remove(map.size() - 1);
+			}
+			ensureExistingHeights(newHeight);
+		}
+		this.mapWidth = newWidth;
+		this.mapHeight = newHeight;
+	}
 
+	private void ensureExistingHeights(int newHeight) {
+		int numAddHeight = newHeight - getMapHeight();
+		if (numAddHeight >= 0) {
+			for (IndexIteratorStatus<List<TM>> ee : new IndexIterator<List<TM>>(map)) {
+				for (int yy = 0; yy < numAddHeight; yy++) {
+					TM tm = newTile(this, ee.getIndex(), getMapHeight() + yy);
+					ee.getValue().add(tm);
+				}
+			}
+		}
+		else {
+			for (List<TM> list : map) {
+				for (int i = 0; i < -numAddHeight; i++) {
+					TM bt = list.remove(list.size() - 1);
+					bt.javaGarbage();
+				}
+			}
+		}
+	}
+	
 	public void javaGarbage() {
 		if (this.map != null) {
 			for (List<?> list : this.map)

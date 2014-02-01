@@ -70,12 +70,6 @@ public abstract class TileView<TM extends ITileModel<?>, MM extends GameView<? e
 	
 	@Override
 	public void onClick(View view) {
-		if (!this.getMap().getPerformClick()) {
-			CustomFacade.getLog().i("Zomis", "Map says: Do not perform click");
-			return;
-		}
-		
-		// do not do this if map has scrolled recently
 		CustomFacade.getGlobalEvents().executeEvent(new AndroidTileClickEvent(this));
 	}
 	

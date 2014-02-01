@@ -3,8 +3,8 @@ package net.zomis.mazes;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.AStar;
 import net.zomis.custommap.IntPoint;
+import net.zomis.others.AStar;
 
 public class AStarPath2<Maze> extends AStar<IntPoint> {
 

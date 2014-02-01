@@ -35,5 +35,14 @@ public class AndroidScrollEvent implements IEvent {
 	public IAndroidGameView getView() {
 		return view;
 	}
-
+	@Override
+	public String toString() {
+		return String.format("AndroidScrollEvent %f, %f on view %s", this.getDistanceX(), this.getDistanceY(), this.getView());
+	}
+	public float getDistanceLength() {
+		return (float) Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+	}
+	public float getAngleRadians() {
+		return (float) Math.atan2(this.distanceY, this.distanceX);
+	}
 }

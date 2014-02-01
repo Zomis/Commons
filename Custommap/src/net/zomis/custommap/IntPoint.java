@@ -26,7 +26,7 @@ public class IntPoint {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof IntPoint))
 			return false;
 		IntPoint other = (IntPoint) obj;
 		if (x != other.x)

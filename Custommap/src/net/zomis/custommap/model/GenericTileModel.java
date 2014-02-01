@@ -19,14 +19,15 @@ public abstract class GenericTileModel<TM, MM extends GenericMapModel<? extends 
 	}
 	
 	public TM getRelative(int dx, int dy) {
-		int nx = x + dx;
-		int ny = y + dy;
-		if (nx < 0) return null;
-		if (ny < 0) return null;
-		if (nx >= map.mapWidth) return null;
-		if (ny >= map.mapHeight) return null;
+		int newX = x + dx;
+		int newY = y + dy;
+		if (newX < 0 || newY < 0)
+			return null;
 		
-		return map.pos(nx, ny);
+		if (newX >= map.getMapWidth() || newY >= map.getMapHeight())
+			return null;
+		
+		return map.pos(newX, newY);
 	}
 	@Deprecated
 	public String getCoordinateHex() {
@@ -37,10 +38,19 @@ public abstract class GenericTileModel<TM, MM extends GenericMapModel<? extends 
 	public String getCoordinateString() {
 		return String.format("(%d, %d)", this.getX(), this.getY());
 	}
-	public int getX() { return this.x; }
-	public int getY() { return this.y; }
+	public int getX() { 
+		return this.x;
+	}
+	public int getY() { 
+		return this.y;
+	}
 	@Override
 	public String toString() {
 		return String.format("(Tile %d, %d)", this.x, this.y);
+	}
+	
+	@Override
+	public void javaGarbage() {
+		this.map = null;
 	}
 }

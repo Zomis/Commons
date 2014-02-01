@@ -16,14 +16,10 @@ public class ZomisUtils {
 	public static final double EPSILON	= 0.000001;
 	public static String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	
-//	public static String format(String format, Object... values) {
-//		throw new UnsupportedOperationException();
-	// Format: %1: %2 %3 %4 %7 %5 %1 %1. Where the %x is the parameter index in values.
-	// Throw IllegalArgumentException if values count not matching
-//	}
 	public static double nanoToMilli(long nano) {
 		return nano / 1000000.0;
 	}
+	@Deprecated
 	public static String format(Object... values) {
 		StringBuilder str = new StringBuilder();
 		for (Object obj : values) str.append(obj);
@@ -123,12 +119,38 @@ public class ZomisUtils {
 	public static int ensureRange(int low, int value, int max) {
 		return Math.max(low, Math.min(value, max));
 	}
+	public static float ensureRange(float low, float value, float max) {
+		return Math.max(low, Math.min(value, max));
+	}
 	
+	public static double NNKKnoDiv(int N, int n, int K, int k) {
+		return nCr(K, k) * nCr(N - K, n - k);
+	}
+	public static double NNKKwithDiv(int N, int n, int K, int k) {
+		return NNKKnoDiv(N, n, K, k) / nCr(N, n);
+	}
+	public static double nPr(int n, int r) {
+		double result = 1;
+		for (int i = n; i > n - r; i--)
+			result = result * i;
+		return result;
+	}
+	public static double factorial(int n) {
+		if (n < 0)
+			throw new IllegalArgumentException("n must be >= 0 but was " + n);
+		if (n <= 1)
+			return 1;
+		
+		double result = n;
+		while (--n > 1)
+			result *= n;
+		return result;
+	}
 	public static double nCr(int n, int r) {
-		if (r > n) return 0;
-		if (r < 0) return 0;
-		if (r == 0) return 1;
-		if (r == n) return 1;
+		if (r > n || r < 0)
+			return 0;
+		if (r == 0 || r == n)
+			return 1;
 		
 		double start = 1;
 		
@@ -170,11 +192,32 @@ public class ZomisUtils {
 			}
 		}
 	}
+	/**
+	 * Normalize a value to the range 0..1 (inclusive)
+	 * @param value Value to normalize
+	 * @param min The minimum of all values
+	 * @param range The range of the values (max - min)
+	 * @return
+	 */
 	public static double normalized(double value, double min, double range) {
 		if (range == 0.0) return 0;
 //		return ((value - min) / range - 0.5) * 2;
 		return ((value - min) / range);
 	}
+	
+	/**
+	 * Normalize a value to the range -1..1 (inclusive)
+	 * @param value Value to normalize
+	 * @param min The minimum of all values
+	 * @param range The range of the values (max - min)
+	 * @return
+	 */
+	public static double normalizedSigned(double value, double min, double range) {
+		if (range == 0.0) return 0;
+		return ((value - min) / range - 0.5) * 2;
+	}
+
+	
 	public static String textAfter(String theString, String after) {
 		return ZomisUtils.substr(theString, theString.indexOf(after) + after.length());
 	}
@@ -243,4 +286,18 @@ public class ZomisUtils {
 		return ZomisUtils.substr(str, 0, 1).toUpperCase() + ZomisUtils.substr(str, 1).toLowerCase();
 	}
 	
+	public static int deckCombos(int cardsInDeck, int numCardTypes, int numOfEachType) {
+		if (cardsInDeck < 0)
+			return 0;
+		if (cardsInDeck == 1)
+			return numCardTypes;
+		if (numCardTypes == 1)
+			return numOfEachType >= cardsInDeck ? 1 : 0;
+
+			int result = 0;
+			for (int i = 0; i <= numOfEachType; i++) {
+				result += deckCombos(cardsInDeck - i, numCardTypes - 1, numOfEachType);
+			}
+			return result;
+	}
 }

@@ -41,7 +41,8 @@ public class GestureListener extends SimpleOnGestureListener {
 	
 	@Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-		if (!this.mapView.isInputEnabled()) return false;
+		if (!this.mapView.isInputEnabled()) 
+			return false;
 		
 		if (this.mapView == null) {
 			CustomFacade.getLog().w("onScroll map null");

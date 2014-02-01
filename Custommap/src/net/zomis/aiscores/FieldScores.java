@@ -11,32 +11,42 @@ import java.util.SortedSet;
 import net.zomis.ZomisList;
 import net.zomis.ZomisUtils;
 
+/**
+ * Class containing scores, information about ranks, analyzes, and which score configuration that was used.
+ *
+ * @param <Params> Score parameter type
+ * @param <Field> The type to apply scores to
+ */
 public class FieldScores<Params, Field> implements ScoreParameters<Params> {
-	private List<AbstractScorer<Params, Field>> activeScorers;
 	private final ScoreConfig<Params, Field>	config;
-	private Map<Class<?>, Object> analyzes;
-
 	private final Map<Field, FieldScore<Field>> scores = new HashMap<Field, FieldScore<Field>>();
+	private final Params 						params;
+	private final ScoreStrategy<Params, Field> 	scoreStrategy;
 	
-	private Params	params;
-	private ScoreStrategy<Params, Field>	strat;
+	private List<AbstractScorer<Params, Field>> activeScorers;
+	private List<List<FieldScore<Field>>> 		rankedScores;
+	private Map<Class<?>, Object> analyzes;
+	private boolean detailed;
 	
 	@SuppressWarnings("unchecked")
 	public <E> E getAnalyze(Class<E> clazz) {
-//		Logger.getLogger(getClass()).info("Getting analyze for class " + clazz + " size is " + this.analyzes.size());
 		return (E) this.analyzes.get(clazz);
+	}
+	
+	public Map<Class<?>, Object> getAnalyzes() {
+		return new HashMap<Class<?>, Object>();
 	}
 	
 	FieldScores(Params params, ScoreConfig<Params, Field> config, ScoreStrategy<Params, Field> strat) {
 		this.params = params;
 		this.config = config;
-		this.strat = strat;
+		this.scoreStrategy = strat;
 	}
 
+	/**
+	 * Call each {@link AbstractScorer}'s workWith method to determine if that scorer is currently applicable
+	 */
 	void determineActiveScorers() {
-		if (activeScorers != null)
-			throw new IllegalStateException();
-		
 		activeScorers = new ArrayList<AbstractScorer<Params, Field>>();
 
 		for (AbstractScorer<Params, Field> scorer : config.getScorers().keySet()) {
@@ -46,20 +56,27 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 		}
 	}
 
-	void calculateMoveScores() {
-		for (Field field : this.strat.getFieldsToScore(params)) {
-			if (!this.strat.canScoreField(this, field))
+	/**
+	 * Process the {@link AbstractScorer}s to let them add their score for each field. Uses the {@link ScoreStrategy} associated with this object to determine which fields should be scored.
+	 */
+	void calculateScores() {
+		for (Field field : this.scoreStrategy.getFieldsToScore(params)) {
+			if (!this.scoreStrategy.canScoreField(this, field))
 				continue;
 			
-			FieldScore<Field> fscore = new FieldScore<Field>(field);
+			FieldScore<Field> fscore = new FieldScore<Field>(field, detailed);
 			for (AbstractScorer<Params, Field> scorer : activeScorers) {
-				double lastScore = scorer.getScoreFor(field, this);
-				fscore.addScore(scorer, lastScore, this.config.getScorers().get(scorer));
+				double computedScore = scorer.getScoreFor(field, this);
+				double weight = config.getScorers().get(scorer);
+				fscore.addScore(scorer, computedScore, weight);
 			}
 			scores.put(field, fscore);
 		}
 	}
 
+	/**
+	 * Call {@link PostScorer}s to let them do their job, after the main scorers have been processed.
+	 */
 	void postHandle() {
 		for (PostScorer<Params, Field> post : this.config.getPostScorers()) {
 			post.handle(this);
@@ -71,67 +88,33 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 		return this.params;
 	}
 
-//	public Field[][] getRankings() {
-//		return this.ranks;
-//	}
+	/**
+	 * Get a List of all the ranks. Each rank is a list of all the {@link FieldScore} objects in that rank
+	 * @return A list of all the ranks, where the first item in the list is the best rank
+	 */
 	public List<List<FieldScore<Field>>> getRankedScores() {
 		return rankedScores;
 	}
 
+	/**
+	 * @return A {@link HashMap} copy of the scores that are contained in this object
+	 */
 	public Map<Field, FieldScore<Field>> getScores() {
-		return this.scores;
+		return new HashMap<Field, FieldScore<Field>>(this.scores);
 	}
 
-	public List<FieldScore<Field>> getBestFields() {
-		return ZomisList.getAllExtreme(this.scores.values(), Integer.MIN_VALUE, new _GetValueFieldScore());
-	}
-	
-	private class _GetValueFieldScore implements ZomisList.GetValueInterface<FieldScore<Field>> {
-		@Override
-		public double getValue(FieldScore<Field> obj) {
-			return obj.getScore();
-		}
-	}
-
+	/**
+	 * Get the {@link FieldScore} object for a specific field.
+	 * @param field Field to get data for
+	 * @return FieldScore for the specified field.
+	 */
 	public FieldScore<Field> getScoreFor(Field field) {
-		return this.scores.get(field);
+		return scores.get(field);
 	}
 
-	public double getNormalized(Field field) {
-		if (scores.get(field) == null)
-			throw new IllegalArgumentException("Field does not exist among scores: " + field);
-		SortedSet<Entry<Field, FieldScore<Field>>> sorted = ZomisList.entriesSortedByValues(scores, true);
-		double max = sorted.first().getValue().getScore();
-		double min = sorted.last().getValue().getScore();
-		double range = max - min;
-		return ZomisUtils.normalized(scores.get(field).getScore(), min, range);
-	}
-	
-	@Deprecated
-	public void normalize() {
-	}
-	
-	public static <ScoreField> boolean listsEquals(List<FieldScore<ScoreField>> a, List<FieldScore<ScoreField>> b) {
-		List<ScoreField> temp;
-		temp = scoresToFields(a);
-		temp.removeAll(b);
-		if (!temp.isEmpty()) return false;
-		
-		temp = scoresToFields(b);
-		temp.removeAll(a);
-		if (!temp.isEmpty()) return false;
-		
-		return true;
-	}
-
-	public static <ScoreField> List<ScoreField> scoresToFields(List<FieldScore<ScoreField>> scoreList) {
-		List<ScoreField> list = new ArrayList<ScoreField>();
-		for (FieldScore<ScoreField> score : scoreList) list.add(score.getField());
-		return list;
-	}
-
-	private List<List<FieldScore<Field>>> rankedScores;
-	
+	/**
+	 * (Re-)calculates rankings for all the fields, and also calculates a normalization of their score
+	 */
 	public void rankScores() {
 		SortedSet<Entry<Field, FieldScore<Field>>> sorted = ZomisList.entriesSortedByValues(this.scores, true);
 		rankedScores = new LinkedList<List<FieldScore<Field>>>();
@@ -140,8 +123,6 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 		double minScore = sorted.last().getValue().getScore();
 		double maxScore = sorted.first().getValue().getScore();
 		double lastScore = maxScore + 1;
-		
-//		Logger.getLogger(FieldScores.class).info("Normalizing called, " + lastScore + ", " + minScore + "--" + maxScore + ": " + this, new Exception());
 		
 		int rank = 0;
 		List<FieldScore<Field>> currentRank = new LinkedList<FieldScore<Field>>();
@@ -154,32 +135,42 @@ public class FieldScores<Params, Field> implements ScoreParameters<Params> {
 			}
 			score.getValue().setRank(rank);
 			double normalized = ZomisUtils.normalized(score.getValue().getScore(), minScore, maxScore - minScore);
-//			if (currentRank.size() == 0) Logger.getLogger(FieldScores.class).info("Normalizing " + score.getValue().getScore() + ", " + minScore + "--" + maxScore + ": " + normalized);
 
 			score.getValue().setNormalized(normalized);
 			currentRank.add(score.getValue());
 		}
 	}
 	/**
-	 * 
+	 * Get all {@link FieldScore} objects for a specific rank
 	 * @param rank From 1 to getRankLength() 
-	 * @return
+	 * @return A list of all FieldScores for the specified rank
 	 */
 	public List<FieldScore<Field>> getRank(int rank) {
 		if (rankedScores.isEmpty()) return null;
 		return rankedScores.get(rank - 1);
 	}
-
+	/**
+	 * Get the number of ranks
+	 * @return The number of ranks
+	 */
 	public int getRankCount() {
 		return rankedScores.size();
 	}
-
+	/**
+	 * @return The score configuration that was used to calculate these field scores.
+	 */
 	public ScoreConfig<Params, Field> getConfig() {
 		return this.config;
 	}
 
-	public void setAnalyzes(Map<Class<?>, Object> analyzes) {
-//		Logger.getLogger(getClass()).info("Copying analyzes: " + analyzes + " size " + analyzes.size());
+	void setAnalyzes(Map<Class<?>, Object> analyzes) {
 		this.analyzes = new HashMap<Class<?>, Object>(analyzes);
+	}
+
+	/**
+	 * @param detailed True to store detailed information about which scorer gives which score to which field. False otherwise
+	 */
+	public void setDetailed(boolean detailed) {
+		this.detailed = detailed;
 	}
 }

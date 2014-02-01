@@ -1,9 +1,7 @@
 package net.zomis.events;
 
 /**
- * Indication that a class can be scanned for @Event annotations
+ * Marker interface for classes that can be scanned for @Event annotations
  * @see Event
  */
-public interface EventListener {
-	
-}
+public interface EventListener {}

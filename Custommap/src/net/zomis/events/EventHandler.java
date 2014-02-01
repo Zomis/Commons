@@ -3,14 +3,11 @@ package net.zomis.events;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import net.zomis.custommap.CustomFacade;
 
 public class EventHandler implements Comparable<EventHandler> {
-	private static final Logger logger = LogManager.getLogger(EventHandler.class);
-	
 	private final EventListener	listener;
-	private final Method	method;
+	private final Method method;
 	private final Event	annotation;
 	
 	public EventHandler(EventListener listener, Method method, Event annotation) {
@@ -19,38 +16,42 @@ public class EventHandler implements Comparable<EventHandler> {
 		this.annotation = annotation;
 	}
 	
-	public Event getAnnotation() {
-		return annotation;
-	}
-
-	public Method getMethod() {
-		return method;
-	}
-	public EventListener getListener() {
+	EventListener getListener() {
 		return listener;
 	}
 	
 	public void execute(IEvent event) {
 		try {
 			method.invoke(listener, event);
-		} catch (IllegalAccessException e1) { // Invoke exceptions
-			logger.error("Exception when performing EventHandler " + this.listener + " for event " + event.toString(), e1);
+		} catch (IllegalAccessException e1) {
+			throw new RuntimeException(errorString(event), e1);
 		} catch (IllegalArgumentException e1) {
-			logger.error("Exception when performing EventHandler " + this.listener + " for event " + event.toString(), e1);
+			throw new RuntimeException(errorString(event), e1);
 		} catch (InvocationTargetException e1) {
-			logger.error("Exception when performing EventHandler " + this.listener + " for event " + event.toString(), e1);
+			CustomFacade.getLog().e(errorString(event), e1.getCause());
+			if (annotation.propagateExceptions())
+				throw new EventException(errorString(event), e1.getCause());
 		} 
 	}
+	private final String errorString(IEvent event) {
+		return "Exception when executing " + method.getName() + " in listener " + listener + " for event " + event;
+	}
+	
 	@Override
 	public String toString() {
 		return "(EventHandler " + this.listener + ": " + method.getName() + ")";
 	}
 
+	public int getPriority() {
+		return annotation.priority();
+	}
+	
 	@Override
 	public int compareTo(EventHandler other) {
+		// Because we are using a TreeSet to store EventHandlers in, compareTo should never return "equal".
 		int annotation = this.annotation.priority() - other.annotation.priority();
-		if (annotation == 0) annotation = this.listener.hashCode() - other.listener.hashCode();
+		if (annotation == 0) 
+			annotation = this.listener.hashCode() - other.listener.hashCode();
 		return annotation == 0 ? this.hashCode() - other.hashCode() : annotation;
-//		throw new UnsupportedOperationException("Kids don't try this at home."); // TODO: Fixa. Kolla så att alla också kommer med och inte skriver över varandra.
 	}
 }

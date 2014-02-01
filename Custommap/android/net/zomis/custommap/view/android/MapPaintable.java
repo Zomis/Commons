@@ -23,6 +23,9 @@ import android.view.View.OnTouchListener;
  * @see MyImageView
  */
 public class MapPaintable implements ViewObject, OnTouchListener {// extends View, Drawable, or nothing?
+	/**
+	 * To better follow the actual usage of image, avoid using image just to get Context or Resources or similar.
+	 */
 	protected transient MyImageView image;
 	// TODO: try to avoid MapPaintable.size property? Use TileSize on GameView instead, when possible
 	private transient int size;	// is this really needed as a property of MapPaintable ??
@@ -31,10 +34,11 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
 	protected int x;
 	protected int y;
 
-	
+	public Context getContext() {
+		return image.getContext();
+	}
 	public MapPaintable(IAndroidGameView g) {
 		this.view = g;
-		//	CustomFacade.getLog().d("Zomis", "MapPaintable-Init");
 		if (g != null) {
 			if (g.getLayout() != null) {
 				if (g.getLayout().getContext() != null) {
@@ -46,8 +50,8 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
 			view.addViewObject(this);
 			this.setSize(g.getTileSizeScaled());
 		}
-//		updatePosition();
 	}
+	@Override
 	public int getHeight() {
 		return this.size;
 	}
@@ -68,20 +72,18 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
     	if (this.getMap() == null) return this.size;
 		return this.getMap().getTileSizeScaled();
 	}
-	
+	@Override
     public Object getViewToAdd() {
 		return this.image;
 	}
 
+    @Override
     public int getWidth() {
 		return this.size;
 	}
     
+    @Override
 	public boolean onTouch(View view, MotionEvent event) {
-//		event.setLocation(event.x, y);
-		//CustomFacade.getLog().v("Zomis", "MapPaintable onTouch " + this.toString() + "; " + event.toString());
-		if (event.getActionMasked() == MotionEvent.ACTION_DOWN)
-			this.getMap().setPerformClick(true);
 		this.getMap().onTouch(view, event);
 		return false;// what happens if true is returned here instead? Tejpbit's experience is that it will not be clickable
 	}
@@ -108,6 +110,7 @@ public class MapPaintable implements ViewObject, OnTouchListener {// extends Vie
 	 * @param drawableName drawable name in the drawable directory, or it can begin with `android.R.drawable.` to refer to a built-in Android drawable.
 	 * @return 0 on failure. Resource integer on success
 	 */
+	@Deprecated
 	public void setImageResourceByName(String drawableName) {
 		this.setImageResourceByInt(getImageResourceByName(this.view.getLayout().getContext(), drawableName));
 	}

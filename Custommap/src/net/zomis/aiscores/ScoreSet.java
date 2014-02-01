@@ -1,26 +1,19 @@
 package net.zomis.aiscores;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
 
-
-public class ScoreSet<Params, Field> extends TreeMap<AbstractScorer<Params, Field>, Double> {
+/**
+ * Map of {@link AbstractScorer}s and the weight that should be applied to them.
+ *
+ * @param <Params> Score parameter type
+ * @param <Field> The type to apply scores to
+ */
+public class ScoreSet<Params, Field> extends LinkedHashMap<AbstractScorer<Params, Field>, Double> {
 	private static final long	serialVersionUID	= 5924233965213820945L;
 
 	ScoreSet() {
-		super(new ScoreSetComparator());
 	}
-	
-	private static class ScoreSetComparator implements Comparator<AbstractScorer<?, ?>> {
-		@Override
-		public int compare(AbstractScorer<?, ?> o1, AbstractScorer<?, ?> o2) {
-			return o1.getName().compareTo(o2.getName());
-		}
-	}
-	
-	public List<AbstractScorer<Params, Field>> keysToList() {
-		return new ArrayList<AbstractScorer<Params, Field>>(this.keySet()); // Arrays.asList(this.mapKeys);
+	ScoreSet(ScoreSet<Params, Field> copy) {
+		super(copy);
 	}
 }

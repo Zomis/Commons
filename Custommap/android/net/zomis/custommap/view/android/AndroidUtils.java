@@ -1,18 +1,35 @@
 package net.zomis.custommap.view.android;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.os.Environment;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.MeasureSpec;
 
 public class AndroidUtils {
+	public static File getSaveDirectory(String appname, String subdir) {
+		File externalPath = Environment.getExternalStorageDirectory();
+		File f;
+		if (subdir == null)
+			f = new File(externalPath.getAbsolutePath() + "/" + appname);
+		else f = new File(externalPath.getAbsolutePath() + "/" + appname + "/" + subdir);
+		f.mkdirs();
+		return f;
+	}
 	public static int dpToPixels(int dp, Context context ) {
     	DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 		return dp * (metrics.densityDpi / 160);
@@ -40,6 +57,24 @@ public class AndroidUtils {
 		v.layout(0, 0, w, h);
 		v.draw(c);
 		return b;
+	}
+	
+	public static String getSignature(PackageManager packageManager, String packageName) {
+		try {
+			PackageInfo info = packageManager.getPackageInfo(
+					packageName, 
+					PackageManager.GET_SIGNATURES);
+			for (Signature signature : info.signatures) {
+				MessageDigest md = MessageDigest.getInstance("SHA");
+				md.update(signature.toByteArray());
+				return Base64.encodeToString(md.digest(), Base64.DEFAULT);
+			}
+			return null;
+		} catch (NameNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}				
 	}
 
 	public static Bitmap screenshot(View view) {

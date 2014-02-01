@@ -17,4 +17,7 @@ public class UnusedTile implements ITileModel<UnusedTile> {
 	public int getY() {
 		return 0;
 	}
+	@Override
+	public void javaGarbage() {
+	}
 }

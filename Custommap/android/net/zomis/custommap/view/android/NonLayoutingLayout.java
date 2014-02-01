@@ -12,8 +12,8 @@ import android.view.ViewGroup;
  * 
  */
 public class NonLayoutingLayout extends ViewGroup {
-    private float	nextScrollX = -1;
-	private float	nextScrollY = -1;
+    private float nextScrollX = -1;
+	private float nextScrollY = -1;
 
 	public NonLayoutingLayout(Context context, AttributeSet attrs) {
         super(context, attrs);

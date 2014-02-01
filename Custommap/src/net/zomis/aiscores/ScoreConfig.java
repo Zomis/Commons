@@ -1,19 +1,27 @@
 package net.zomis.aiscores;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Score Configuration containing instances of {@link PreScorer}, {@link PostScorer} and {@link AbstractScorer}
+ *
+ * @param <Params> Score parameter type
+ * @param <Field> The type to apply scores to
+ */
 public class ScoreConfig<Params, Field> {
 	private final ScoreSet<Params, Field> scorers;
 	private final List<PostScorer<Params, Field>> postScorers;
-	private boolean detailed;
 	private final List<PreScorer<Params>> preScorers;
 	
+	public ScoreConfig(ScoreConfig<Params, Field> copy) {
+		this(copy.preScorers, copy.postScorers, copy.scorers);
+	}
+	
 	public ScoreConfig(List<PreScorer<Params>> preScorers, List<PostScorer<Params, Field>> postScorers, ScoreSet<Params, Field> scorers) {
-		this.postScorers = Collections.unmodifiableList(postScorers);
-		this.preScorers = Collections.unmodifiableList(preScorers);
-		this.scorers = scorers;
+		this.postScorers = new ArrayList<PostScorer<Params,Field>>(postScorers);
+		this.preScorers = new ArrayList<PreScorer<Params>>(preScorers);
+		this.scorers = new ScoreSet<Params, Field>(scorers);
 	}
 
 	public List<PostScorer<Params, Field>> getPostScorers() {
@@ -24,17 +32,12 @@ public class ScoreConfig<Params, Field> {
 		return scorers;
 	}
 
-	public boolean isDetailed() {
-		return detailed;
-	}
-	/**
-	 * Set whether or not each FieldScore should contain detailed information about how much score the field got from all different scorers (including post scorers)
-	 * @param detailed True if detailed, false otherwise.
-	 */
-	public void setDetailed(boolean detailed) {
-		this.detailed = detailed;
-	}
 	public List<PreScorer<Params>> getPreScorers() {
 		return preScorers;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("Scorers:{PreScorer: %s, PostScorer: %s, Scorers: %s}", preScorers, postScorers, scorers);
 	}
 }

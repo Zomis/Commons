@@ -3,71 +3,67 @@ package net.zomis.aiscores;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 
+ *
+ * @param <Params> Score parameter type
+ * @param <Field> The type to apply scores to
+ */
 public class FieldScoreProducer<Params, Field> {
 	private final ScoreConfig<Params, Field> config;
 
-	private final Map<Class<?>, Object> analyzes;
-	private boolean analyzed;
-
-	private ScoreStrategy<Params, Field>	strat;
+	private boolean detailed;
+	private final ScoreStrategy<Params, Field> scoreStrategy;
 
 	public FieldScoreProducer(ScoreConfig<Params, Field> config, ScoreStrategy<Params, Field> strat) {
 		this.config = config;
-		this.analyzes = new HashMap<Class<?>, Object>();
-		this.analyzed = false;
-		this.strat = strat;
+		this.scoreStrategy = strat;
 	}
 	
-	public synchronized FieldScores<Params, Field> score(Params params) {
-		if (!this.analyzed) 
-			return null;
-		
-		FieldScores<Params, Field> scores = new FieldScores<Params, Field>(params, config, strat);
-		scores.setAnalyzes(this.analyzes);
+	public FieldScores<Params, Field> score(Params params, Map<Class<?>, Object> analyzes) {
+		FieldScores<Params, Field> scores = new FieldScores<Params, Field>(params, config, scoreStrategy);
+		scores.setAnalyzes(analyzes);
+		scores.setDetailed(this.detailed);
 		
 		scores.determineActiveScorers();
-		scores.calculateMoveScores();
-//		scores.calculateRankings();
+		scores.calculateScores();
 		scores.rankScores();
 		scores.postHandle();
 		
 		for (PreScorer<Params> prescore : config.getPreScorers()) {
-			prescore.scoringComplete();
+			prescore.onScoringComplete();
 		}
 		
 		return scores;
 	}
 	
-	public synchronized Map<Params, FieldScores<Params, Field>> scoreAll(Params... params) {
-		// TODO: Find the best score for each param, then return the best rank and the param that produced the best rank. Intended to be used for: MFE AI make move (Weapon is part of param)
-		Map<Params, FieldScores<Params, Field>> allScores = new HashMap<Params, FieldScores<Params,Field>>();
-		for (Params param : params) {
-			this.analyze(param); // TODO: Make it possible to only analyze once. Possibly include analyze data as part of param(!)
-			allScores.put(param, this.score(param));
-		}
-		return allScores;
+	public boolean isDetailed() {
+		return detailed;
+	}
+	/**
+	 * Set whether or not each FieldScore should contain detailed information about how much score the field got from all different scorers (including post scorers)
+	 * @param detailed True if detailed, false otherwise.
+	 */
+	public void setDetailed(boolean detailed) {
+		this.detailed = detailed;
 	}
 	
-	
-	public synchronized boolean analyze(Params param) {
-		this.analyzed = false;
-		this.analyzes.clear();
+	public Map<Class<?>, Object> analyze(Params param) {
+		Map<Class<?>, Object> analyze = new HashMap<Class<?>, Object>();
 		for (PreScorer<Params> preScorers : this.config.getPreScorers()) {
 			Object data = preScorers.analyze(param);
-			if (data == null) return false;
-			this.analyzes.put(data.getClass(), data);
+			if (data == null) 
+				continue; // avoid NullPointerException
+			analyze.put(data.getClass(), data);
 		}
-		
-		this.analyzed = true;
-		return true;
+		return analyze;
 	}
 
 	public ScoreConfig<Params, Field> getConfig() {
 		return this.config;
 	}
 
-	public synchronized FieldScores<Params, Field> analyzeAndScore(Params params) {
-		this.analyze(params);
-		return this.score(params);
+	public FieldScores<Params, Field> analyzeAndScore(Params params) {
+		return this.score(params, this.analyze(params));
 	}
 }

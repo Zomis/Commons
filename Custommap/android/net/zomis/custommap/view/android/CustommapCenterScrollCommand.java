@@ -1,6 +1,5 @@
 package net.zomis.custommap.view.android;
 
-import net.zomis.custommap.CustomFacade;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
@@ -29,9 +28,9 @@ public class CustommapCenterScrollCommand {
 		int scrollToX = (grpSize.getWidth()  - view.getScrollBounds().width()) / 2;
 		int scrollToY = (grpSize.getHeight() - view.getScrollBounds().height()) / 2;
 		
-		CustomFacade.getLog().d(String.format("CenterScroll Bounds: %s", view.getScrollBounds().toString()));
-		CustomFacade.getLog().d(String.format("CenterScroll to %d, %d. Width x Height %d %d. TileSize %d", scrollToX, scrollToY, grpSize.getWidth(), grpSize.getHeight(), 
-				view.getTileSizeScaled()));
+//		CustomFacade.getLog().d(String.format("CenterScroll Bounds: %s", view.getScrollBounds().toString()));
+//		CustomFacade.getLog().d(String.format("CenterScroll to %d, %d. Width x Height %d %d. TileSize %d", scrollToX, scrollToY, grpSize.getWidth(), grpSize.getHeight(), 
+//				view.getTileSizeScaled()));
 		view.getLayout().scrollTo(-scrollToX, -scrollToY);
 		
 	}

@@ -2,6 +2,7 @@ package net.zomis.custommap;
 
 import java.lang.reflect.Constructor;
 
+import net.zomis.custommap.view.SwingLog;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.custommap.view.ZomisTimer;
 import net.zomis.events.EventExecutor;
@@ -25,6 +26,11 @@ public class CustomFacade implements EventListener {
 		if (instance == null) return null;
 		return instance.events;
 	}
+	public static CustomFacade initializeIfNeeded(ZomisLog logger) {
+		if (instance == null)
+			instance = new CustomFacade(logger);
+		return instance;
+	}
 	
 	public EventExecutor getEventExecutor() {
 		return this.events ;
@@ -46,6 +52,8 @@ public class CustomFacade implements EventListener {
 	protected void initialize() {}
 
 	public static ZomisLog getLog() {
+		if (logger == null)
+			logger = new SwingLog();
 		return logger;
 	}
 

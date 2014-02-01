@@ -29,7 +29,7 @@ public class ZomisList {
 		 */
 		boolean shouldKeep(E obj);
 	}
-	public static class IsClassFilter implements FilterInterface<Object> {
+	public static class IsClassFilter<E> implements FilterInterface<E> {
 
 		private Class<?> clazz;
 		
@@ -38,7 +38,7 @@ public class ZomisList {
 		}
 		
 		@Override
-		public boolean shouldKeep(Object obj) {
+		public boolean shouldKeep(E obj) {
 			return obj == null ? false : clazz.isAssignableFrom(obj.getClass());
 		}
 		
@@ -110,7 +110,7 @@ public class ZomisList {
 		return list2;
 	}
 	public static <E> List<E> getAll(Iterable<E> list, FilterInterface<? super E> filter) {
-		// TODO: Is there any real difference between ZomisList.filter2 and ZomisList.getAll ?
+		// TODO: Not much difference between ZomisList.filter2 and ZomisList.getAll. Merge them.
 		List<E> result = new LinkedList<E>();
 		for (E e : list)
 			if (filter.shouldKeep(e)) result.add(e);
@@ -237,6 +237,15 @@ public class ZomisList {
 		public boolean shouldKeep(E obj) {
 			return filterA.shouldKeep(obj) ^ filterB.shouldKeep(obj);
 		}
+	}
+	
+	public static <E> Comparator<E> listComparator(final List<E> list) {
+		return new Comparator<E>() {
+			@Override
+			public int compare(E arg0, E arg1) {
+				return list.indexOf(arg0) - list.indexOf(arg1);
+			}
+		};
 	}
 	
 }

@@ -16,7 +16,7 @@ public abstract class SubclassScorer<Params, A, B extends A> extends AbstractSco
 	public final double getScoreFor(A field, ScoreParameters<Params> scores) {
 		Class<?> clz = ZomisUtils.classFor(field);
 		if (clz == null)
-			return 0;
+			return clazz == null ? this.scoreSubclass(null, scores) : 0;
 		if (clazz.isAssignableFrom(clz)) {
 			double value = scoreSubclass(clazz.cast(field), scores);
 //			CustomFacade.getLog().i("Subclass scorer: " + value + " for " + field + ", " + scores);
@@ -25,11 +25,10 @@ public abstract class SubclassScorer<Params, A, B extends A> extends AbstractSco
 		else return 0;
 	}
 
-	@Override
-	public boolean workWith(ScoreParameters<Params> scores) {
-		return true;
-	}
-	
 	public abstract double scoreSubclass(B cast, ScoreParameters<Params> scores);
 
+	public String getName() {
+		return this.getClass().getSimpleName() + "-" + clazz.getSimpleName();
+	}
+	
 }

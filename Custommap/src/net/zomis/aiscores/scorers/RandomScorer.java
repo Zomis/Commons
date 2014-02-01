@@ -15,10 +15,6 @@ public class RandomScorer<A, B> extends AbstractScorer<A, B> {
 	public RandomScorer() {
 		this(new Random());
 	}
-	@Override
-	public boolean workWith(ScoreParameters<A> scores) {
-		return true;
-	}
 
 	@Override
 	public double getScoreFor(B field, ScoreParameters<A> scores) {

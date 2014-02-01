@@ -1,5 +1,6 @@
 package net.zomis.events;
 
-public interface IEvent {
-
-}
+/**
+ * Marker interface for events
+ */
+public interface IEvent {}

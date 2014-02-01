@@ -7,14 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public interface IAndroidGameView extends IGameView {
-	void setPerformClick(boolean value);
-	boolean getPerformClick();
-	
 	boolean onLongClick(View v);
 	Rect getScrollBounds();
 	ViewGroup getLayout();
 	void addViewToGame(View image, boolean backGround);
-	View getLastTouchedView();
 	boolean onTouch(View view, MotionEvent event);
 
 	void resize();
