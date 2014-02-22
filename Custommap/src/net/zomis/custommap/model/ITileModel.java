@@ -1,5 +1,7 @@
 package net.zomis.custommap.model;
 
+import net.zomis.interfaces.Garbagable;
+
 /**
  * 
  * @author Zomis

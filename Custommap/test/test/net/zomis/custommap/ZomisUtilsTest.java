@@ -1,7 +1,7 @@
 package test.net.zomis.custommap;
 
 import static org.junit.Assert.*;
-import net.zomis.ZomisUtils;
+import net.zomis.utils.ZomisUtils;
 
 import org.junit.Test;
 

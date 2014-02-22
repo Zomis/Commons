@@ -1,7 +1,10 @@
-package net.zomis.custommap;
+package net.zomis.common;
 
-public class IntPoint {
-    protected int x, y;
+import net.zomis.interfaces.HasPos;
+
+public class IntPoint implements HasPos {
+    protected int x;
+    protected int y;
     
     public IntPoint() {
 		this(0, 0);
@@ -12,30 +15,6 @@ public class IntPoint {
     public IntPoint(int coordx, int coordy) {
     	this.set(coordx, coordy);
     }
-    @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + x;
-		result = prime * result + y;
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof IntPoint))
-			return false;
-		IntPoint other = (IntPoint) obj;
-		if (x != other.x)
-			return false;
-		if (y != other.y)
-			return false;
-		return true;
-	}
-    
 
     public void set(int coordx, int coordy) {
         x = coordx;
@@ -49,6 +28,13 @@ public class IntPoint {
         return y;
     }
 
+    public IntPoint dxdy(int dx, int dy) {
+    	return new IntPoint(x + dx, y + dy);
+    }
+    public IntPoint dxdy(IntPoint delta) {
+    	return new IntPoint(x + delta.x, y + delta.y);
+    }
+    
     @Override
     public String toString() {
         return "[" + x + "," + y + "]";
@@ -64,5 +50,24 @@ public class IntPoint {
 	public double distance(IntPoint other) {
 		return Math.sqrt(distanceSquared(other));
 	}
+	
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!(obj instanceof HasPos))
+			return false;
+		HasPos other = (HasPos) obj;
+		return x == other.getX() && y == other.getY();
+	}
+	
 
 }

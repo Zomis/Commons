@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import net.zomis.IndexIterator;
-import net.zomis.IndexIteratorStatus;
+import net.zomis.interfaces.Garbagable;
+import net.zomis.iterate.IndexIterator;
+import net.zomis.iterate.IndexIteratorStatus;
+import net.zomis.iterate.MapListIterator;
 
 /**
  * 

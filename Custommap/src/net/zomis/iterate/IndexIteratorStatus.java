@@ -1,4 +1,4 @@
-package net.zomis;
+package net.zomis.iterate;
 
 public interface IndexIteratorStatus<E> {
 	int getIndex();

@@ -1,4 +1,4 @@
-package net.zomis;
+package net.zomis.oldstuff;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,13 +1,13 @@
-package net.zomis.custommap.model;
+package net.zomis.iterate;
 
 import java.util.Iterator;
+
 
 public class MapIterator<E> implements Iterator<E>, IteratorStatus {
 	
 	private int x;
 	private int y;
-	private E[][] array;
-//	private E[] xrow;
+	private final E[][] array;
 	private int	lastIndexX;
 	private int	lastIndexY;
 

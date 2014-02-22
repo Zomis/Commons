@@ -1,4 +1,4 @@
-package net.zomis.custommap.model;
+package net.zomis.iterate;
 
 import java.util.Iterator;
 

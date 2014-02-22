@@ -1,8 +1,7 @@
-package net.zomis;
+package net.zomis.iterate;
 
 import java.util.Iterator;
 
-import net.zomis.custommap.model.IteratorStatus;
 
 public class TwoDLoop implements Iterator<IteratorStatus>, Iterable<IteratorStatus>, IteratorStatus {
 

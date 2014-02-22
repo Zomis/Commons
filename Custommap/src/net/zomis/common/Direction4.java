@@ -1,10 +1,8 @@
-package net.zomis;
+package net.zomis.common;
 
-import net.zomis.custommap.IntPoint;
 
 
 public enum Direction4 {
-	// Do NOT change the order of these. See getOpposite and getRotation90.
 	LEFT(-1, 0), RIGHT(1, 0), UP(0, -1), DOWN(0, 1);
 	
 	private int	dx;
@@ -28,16 +26,12 @@ public enum Direction4 {
 	 */
 	public Direction4 getOpposite() {
 		return direction(0, 0, -dx, -dy);
-//		int changed = 1 - ordinal() % 2 + ordinal() / 2 * 2; // this one actually works
-//		return Direction4.values()[changed];
 	}
 	/**
 	 * Left --> Up --> Right --> Down --> Left
 	 * @return A direction that has been rotated 90 degrees clockwise.
 	 */
 	public Direction4 getRotation90() {
-//		int changed = ordinal() - ordinal() / 2 * ordinal() + 2; // this does not work. Kept as comment for history reasons and because of fun. Maybe some day find out how to do this equation.
-//		return Direction4.values()[changed];
 		return direction(0, 0, -dy, dx);
 	}
 	

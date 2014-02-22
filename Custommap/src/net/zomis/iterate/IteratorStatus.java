@@ -1,4 +1,4 @@
-package net.zomis.custommap.model;
+package net.zomis.iterate;
 
 public interface IteratorStatus {
 	int getLastIndexX();

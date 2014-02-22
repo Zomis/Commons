@@ -1,4 +1,4 @@
-package net.zomis;
+package net.zomis.oldstuff;
 
 import java.lang.reflect.*;
 import java.util.*;

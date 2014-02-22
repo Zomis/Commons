@@ -1,12 +1,12 @@
-package net.zomis;
+package net.zomis.oldstuff;
 
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.custommap.model.IteratorStatus;
-import net.zomis.custommap.model.MapIterator;
+import net.zomis.iterate.IteratorStatus;
+import net.zomis.iterate.MapIterator;
 
 public class CharMapPrint {
 	private CharMapPrint() {}

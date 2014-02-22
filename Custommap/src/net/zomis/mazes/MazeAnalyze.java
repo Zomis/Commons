@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.zomis.custommap.IntPoint;
+import net.zomis.common.IntPoint;
 
 
 public class MazeAnalyze<Maze> {
