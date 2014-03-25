@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Event {
+	public static int DEFAULT_PRIORITY = 50;
 	/**
 	 * Low priority = Executed earlier
 	 * 
@@ -20,7 +21,7 @@ public @interface Event {
 	 * 
 	 * @return The priority of this event
 	 */
-	int priority() default 50;
+	int priority() default DEFAULT_PRIORITY;
 	/**
 	 * If true, exceptions caused within this method will be rethrowed, possibly causing program failure as a result
 	 * 

@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.RandomAccess;
 import java.util.SortedSet;
 import java.util.TreeSet;
 /**
@@ -20,6 +22,7 @@ import java.util.TreeSet;
  * @see #getRandom()
  */
 public class ZomisList {
+	private static final int	SHUFFLE_THRESHOLD	= 5;
 	private static Random random = new Random();
 	
 	public static interface FilterInterface<E> {
@@ -28,20 +31,6 @@ public class ZomisList {
 		 * @return True if element should be kept, false otherwise.
 		 */
 		boolean shouldKeep(E obj);
-	}
-	public static class IsClassFilter<E> implements FilterInterface<E> {
-
-		private Class<?> clazz;
-		
-		public IsClassFilter(Class<?> clazz) {
-			this.clazz = clazz;
-		}
-		
-		@Override
-		public boolean shouldKeep(E obj) {
-			return obj == null ? false : clazz.isAssignableFrom(obj.getClass());
-		}
-		
 	}
 	
 	public static interface GetValueInterface<E> {
@@ -182,14 +171,6 @@ public class ZomisList {
 			return list.get(index);
 		else return null;
 	}
-	public static <A, B extends A> List<B> getSubclass(List<A> list, Class<B> clazz) {
-		List<B> result = new LinkedList<B>();
-		for (A unit : list) {
-			if (clazz.isAssignableFrom(unit.getClass()))
-				result.add(clazz.cast(unit));
-		}
-		return result;
-	}
 
 	public static class FilterOR<E> implements FilterInterface<E> {
 		private List<FilterInterface<E>> filters = new LinkedList<ZomisList.FilterInterface<E>>();
@@ -248,4 +229,37 @@ public class ZomisList {
 		};
 	}
 	
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void swap(List<?> list, int i, int j) {
+        final List l = list;
+        l.set(i, l.set(j, l.get(i)));
+    }	
+	
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void shuffle(List<?> list, Random rnd) {
+        int size = list.size();
+        if (size < SHUFFLE_THRESHOLD || list instanceof RandomAccess) {
+            for (int i=size; i>1; i--)
+                swap(list, i-1, rnd.nextInt(i));
+        } else {
+            Object arr[] = list.toArray();
+
+            // Shuffle array
+            for (int i=size; i>1; i--)
+                swap(arr, i-1, rnd.nextInt(i));
+
+            // Dump array back into list
+            ListIterator it = list.listIterator();
+            for (int i=0; i<arr.length; i++) {
+                it.next();
+                it.set(arr[i]);
+            }
+        }
+    }
+    
+    private static void swap(Object[] arr, int i, int j) {
+        Object tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
 }

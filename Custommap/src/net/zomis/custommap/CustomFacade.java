@@ -1,12 +1,10 @@
 package net.zomis.custommap;
 
-import java.lang.reflect.Constructor;
-
 import net.zomis.custommap.view.SwingLog;
 import net.zomis.custommap.view.ZomisLog;
 import net.zomis.custommap.view.ZomisTimer;
-import net.zomis.events.EventExecutor;
 import net.zomis.events.EventListener;
+import net.zomis.events.IEventExecutor;
 
 /**
  * 
@@ -15,16 +13,19 @@ import net.zomis.events.EventListener;
  */
 public class CustomFacade implements EventListener {
 	private String tag = CustomFacade.LOG_TAG;
+	private TimerFactory timerFactory;
+	private EventFactory eventFactory;
 
-	private EventExecutor events = new EventExecutor();
+	private IEventExecutor events;
 	
     private static final String LOG_TAG = "Zomis";
 	
 	private static ZomisLog logger;
 	
-	public static EventExecutor getGlobalEvents() {
-		if (instance == null) return null;
-		return instance.events;
+	public static IEventExecutor getGlobalEvents() {
+		if (instance == null) 
+			return null;
+		return instance.getEventExecutor();
 	}
 	public static CustomFacade initializeIfNeeded(ZomisLog logger) {
 		if (instance == null)
@@ -32,10 +33,17 @@ public class CustomFacade implements EventListener {
 		return instance;
 	}
 	
-	public EventExecutor getEventExecutor() {
-		return this.events ;
+	public IEventExecutor getEventExecutor() {
+		if (events == null)
+			events = createEvents();
+		return this.events;
 	}
 	
+	public IEventExecutor createEvents() {
+		if (eventFactory == null)
+			throw new NullPointerException("No Event Factory set");
+		return eventFactory.createEventExecutor();
+	}
 	public CustomFacade(ZomisLog log) {
 		if (isInitialized()) {
 			logger.w("CustomFacade already initialized. This is likely to produce bugs.");
@@ -45,7 +53,6 @@ public class CustomFacade implements EventListener {
 		instance = this;
 		logger = log;
 		logger.i("CustomFacade initialized");
-		this.events.registerListener(this);
 		this.initialize();
 	}
 	
@@ -71,22 +78,15 @@ public class CustomFacade implements EventListener {
 	}
 	
     public ZomisTimer createTimer(int delay, Runnable runnable) {
-    	if (this.timerClass == null) throw new NullPointerException("CustomFacade.timerClass not set.");
-    	try {
-    		Constructor<? extends ZomisTimer> c = this.timerClass.getDeclaredConstructor(Integer.class, Runnable.class);
-//    		c.setAccessible(true);
-//			timerClass.newInstance();
-	    	return c.newInstance(delay, runnable);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	return null;
+    	if (this.timerFactory == null)
+    		throw new NullPointerException("timerFactory not set.");
+    	return timerFactory.createTimer(delay, runnable);
     }
-    private Class<? extends ZomisTimer> timerClass;
-    public CustomFacade setTimerClass(Class<? extends ZomisTimer> timerClass) {
-    	this.timerClass = timerClass;
-    	return this;
-    }
+    
+    public void setEventFactory(EventFactory eventFactory) {
+		this.eventFactory = eventFactory;
+	}
+    
 	public CustomFacade setTag(String tag) {
 		this.tag = tag;
     	return this;

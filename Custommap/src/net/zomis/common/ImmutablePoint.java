@@ -51,4 +51,9 @@ public class ImmutablePoint implements HasPos {
     public ImmutablePoint dxdy(HasPos delta) {
     	return new ImmutablePoint(x + delta.getX(), y + delta.getY());
     }
+    
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 }

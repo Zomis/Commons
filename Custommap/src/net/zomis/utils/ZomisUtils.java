@@ -1,22 +1,15 @@
 package net.zomis.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.Random;
 
 import net.zomis.custommap.CustomFacade;
 
 public class ZomisUtils {
 	public static final double EPSILON	= 0.000001;
-	public static String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	
 	public static double nanoToMilli(long nano) {
+//		return TimeUnit.MILLISECONDS.convert(nano, TimeUnit.NANOSECONDS);
 		return nano / 1000000.0;
 	}
 	@Deprecated
@@ -26,33 +19,17 @@ public class ZomisUtils {
 		return str.toString();
 	}
 	
-	public static String date(String dateFormat, Date date) {
-		SimpleDateFormat sdf;
-		if (dateFormat == null)	sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
-		else sdf = new SimpleDateFormat(dateFormat);
-		return sdf.format(date);
-	}
-	public static String date(String string, long datetime) {
-		Calendar time = Calendar.getInstance();
-		time.setTimeInMillis(datetime);
-		return date(string, time.getTime());
-	}
-	public static String date(String string) {
-		return date(string, Calendar.getInstance().getTimeInMillis());
-	}
-	public static String date() {
-		return date(DEFAULT_DATE_FORMAT);
-	}
 	public static String substr(final String str, int index, int length) {
-		if (index < 0) index = str.length() + index;
+		if (index < 0) 
+			index = str.length() + index;
 		
-		if (length < 0) length = str.length() + length;
+		if (length < 0) 
+			length = str.length() + length;
 		else length = index + length;
 		
-//		System.out.println("PreLength " + str + "; Index: " + index + "; Length: " + length);
-		if (index > str.length()) return "";
+		if (index > str.length()) 
+			return "";
 		length = Math.min(length, str.length());
-//		System.out.println("PostLength " + str + "; Index: " + index + "; Length: " + length);
 		
 		return str.substring(index, length);
 	}
@@ -61,22 +38,24 @@ public class ZomisUtils {
 			return substr(str, index, str.length() - index);
 		else return substr(str, index, -index);
 	}
-	public static String implode(String string, String[] mess_arr) {
-		if (mess_arr == null) return null;
+	public static String implode(String string, String[] arr) {
+		if (arr == null) 
+			return null;
 		
 		String ret = "";
-		for (Object str : mess_arr)
+		for (Object str : arr)
 		if (str != null) {
 			if (ret.length() > 0) ret += string;
 			ret += str;
 		}
 		return ret;
 	}
-	public static <E> String implodeArr(String string, E[] mess_arr) {
-		if (mess_arr == null) return null;
+	public static <E> String implodeArr(String string, E[] arr) {
+		if (arr == null) 
+			return null;
 		
 		String ret = "";
-		for (Object str : mess_arr)
+		for (Object str : arr)
 		if (str != null) {
 			if (ret.length() > 0) ret += string;
 			ret += str;
@@ -95,7 +74,8 @@ public class ZomisUtils {
 	}
 	
 	public static String hexToString(String hex) {
-		if (hex.length() % 2 != 0) throw new IllegalArgumentException("Hex Length is not divisible by 2");
+		if (hex.length() % 2 != 0) 
+			throw new IllegalArgumentException("Hex Length is not divisible by 2");
 		
 	    StringBuilder output = new StringBuilder();
 	    for (int i = 0; i < hex.length(); i += 2) {
@@ -106,7 +86,8 @@ public class ZomisUtils {
 	}
 
 	public static String implode(String string, Iterable<? extends Object> list) {
-		if (list == null) return null;
+		if (list == null) 
+			return null;
 		
 		StringBuilder ret = new StringBuilder();
 		for (Object str : list)
@@ -159,10 +140,6 @@ public class ZomisUtils {
 		}
 		
 		return start;
-	}
-	
-	public static String coloredText(String text, int color) {
-		return String.format("<font color=\"#%s\">%s</font>", Integer.toString(color, 16), text);
 	}
 	
 	public static interface RecursiveInterface<E> {
@@ -230,60 +207,11 @@ public class ZomisUtils {
 	public static Class<?> classFor(Object data) {
 		return data == null ? null : data.getClass();
 	}
-	/**
-	 * Gets the seed of a {@link Random}-object given it's current state (Note that the seed value changes for each call to one of the Random.next-methods)
-	 * @param random Random object
-	 * @return The seed of the current state of the {@link Random}-object.
-	 */
-	public static long getSeed(Random random) {
-		byte[] ba0, ba1, bar;
-		try {
-			ByteArrayOutputStream baos = new ByteArrayOutputStream(128);
-			ObjectOutputStream oos = new ObjectOutputStream(baos);
-			oos.writeObject(new Random(0));
-			ba0 = baos.toByteArray();
-			baos = new ByteArrayOutputStream(128);
-			oos = new ObjectOutputStream(baos);
-			oos.writeObject(new Random(-1));
-			ba1 = baos.toByteArray();
-			baos = new ByteArrayOutputStream(128);
-			oos = new ObjectOutputStream(baos);
-			oos.writeObject(random);
-			bar = baos.toByteArray();
-		} catch (IOException e) {
-			throw new RuntimeException("IOException: " + e);
-		}
-		if (ba0.length != ba1.length || ba0.length != bar.length)
-			throw new RuntimeException("bad serialized length");
-		int i = 0;
-		while (i < ba0.length && ba0[i] == ba1[i]) {
-			i++;
-		}
-		int j = ba0.length;
-		while (j > 0 && ba0[j - 1] == ba1[j - 1]) {
-			j--;
-		}
-		if (j - i != 6)
-			throw new RuntimeException("6 differing bytes not found");
-		// The constant 0x5DEECE66DL is from
-		// http://download.oracle.com/javase/6/docs/api/java/util/Random.html .
-		return ((bar[i] & 255L) << 40 | (bar[i + 1] & 255L) << 32 |
-				(bar[i + 2] & 255L) << 24 | (bar[i + 3] & 255L) << 16 |
-				(bar[i + 4] & 255L) << 8 | (bar[i + 5] & 255L)) ^ 0x5DEECE66DL;
-	}
 	public static boolean doubleEqual(double a, double b, double epsilon) {
 		return Math.abs(a - b) <= epsilon;
 	}
-	public static <T> T objAs(Object object, Class<T> to) {
-		if (object == null) return null;
-		
-        if (to.isAssignableFrom(object.getClass())) {
-            return to.cast(object);
-        }
-        return null;
-	}
 	public static String capitalize(String str) {
-		return ZomisUtils.substr(str, 0, 1).toUpperCase() + ZomisUtils.substr(str, 1).toLowerCase();
+		return substr(str, 0, 1).toUpperCase() + substr(str, 1).toLowerCase();
 	}
 	
 	public static int deckCombos(int cardsInDeck, int numCardTypes, int numOfEachType) {
