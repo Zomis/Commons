@@ -1,10 +1,12 @@
 package net.zomis.events;
 
 
-public abstract class EventHandlerGWT<T extends IEvent> implements IEventHandler, EventListener, Comparable<IEventHandler> {
+public class EventHandlerIface<T extends IEvent> implements IEventHandler, EventListener, Comparable<IEventHandler> {
 
-	public EventHandlerGWT() {
-		super();
+	private final EventConsumer<T> consumer;
+
+	public EventHandlerIface(EventConsumer<T> consumer) {
+		this.consumer = consumer;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -13,13 +15,10 @@ public abstract class EventHandlerGWT<T extends IEvent> implements IEventHandler
 		this.executeEvent((T) event);
 	}
 
-	public abstract void executeEvent(T event);
-
-	@Override
-	public String toString() {
-		return "EventHandlerGWT@" + hashCode();
+	public void executeEvent(T event) {
+		consumer.executeEvent(event);
 	}
-	
+
 	@Override
 	public int getPriority() {
 		return Event.DEFAULT_PRIORITY;

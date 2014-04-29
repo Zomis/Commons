@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 import net.zomis.custommap.CustomFacade;
 
-public class EventHandler implements Comparable<EventHandler>, IEventHandler {
+public class EventHandler implements IEventHandler {
 	private final EventListener	listener;
 	private final Method method;
 	private final Event	annotation;
@@ -53,14 +53,15 @@ public class EventHandler implements Comparable<EventHandler>, IEventHandler {
 	}
 	
 	@Override
-	public int compareTo(EventHandler other) {
+	public int compareTo(IEventHandler other) {
 		// Because we are using a TreeSet to store EventHandlers in, compareTo should never return "equal".
-		if (this.annotation == null)
-			return this.hashCode() - other.hashCode();
-		
-		int annotation = this.annotation.priority() - other.annotation.priority();
-		if (annotation == 0) 
-			annotation = this.listener.hashCode() - other.listener.hashCode();
-		return annotation == 0 ? this.hashCode() - other.hashCode() : annotation;
+		int compare = 0;
+		if (compare == 0)
+			compare = this.getPriority() - other.getPriority();
+		if (compare == 0 && other instanceof EventHandler) 
+			compare = this.listener.hashCode() - ((EventHandler)other).listener.hashCode();
+		if (compare == 0)
+			compare = this.hashCode() - other.hashCode();
+		return compare;
 	}
 }

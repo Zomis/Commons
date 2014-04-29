@@ -2,6 +2,7 @@ package net.zomis.iterate;
 
 import java.util.Iterator;
 
+@Deprecated
 public class CastedIterator<FromClass, ToClass> implements Iterator<ToClass>, Iterable<ToClass> {
 	// Can't use `ToClass extends FromClass` because it can be used to implement an iterator which is actually *ToClass super FromClass" -- which cannot be declared in the class
 	private Iterator<FromClass> iterator;

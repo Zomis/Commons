@@ -94,7 +94,6 @@ public class ZomisList {
 	}
 	public static <E> LinkedList<E> filter2(Collection<E> list, FilterInterface<? super E> filter) {
 		LinkedList<E> list2 = new LinkedList<E>(list);
-//		for (FilterInterface<E> filter : filters)
 		filter(list2, filter);
 		return list2;
 	}

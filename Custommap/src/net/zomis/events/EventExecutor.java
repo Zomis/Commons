@@ -99,7 +99,8 @@ public class EventExecutor implements IEventExecutor {
 			this.bindings.put(realParam, new TreeSet<IEventHandler>());
 		}
 		Collection<IEventHandler> eventHandlersForEvent = this.bindings.get(realParam);
-		CustomFacade.getLog().v("Add handler: " + handler + " for event " + realParam.getSimpleName());
+		if (debug)
+			CustomFacade.getLog().v("Add handler: " + handler + " for event " + realParam.getSimpleName());
 		eventHandlersForEvent.add(handler);
 	}
 
