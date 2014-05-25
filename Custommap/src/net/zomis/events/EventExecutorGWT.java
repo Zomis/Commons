@@ -82,4 +82,9 @@ public class EventExecutorGWT implements IEventExecutor {
 		return false;
 	}
 
+	@Override
+	public <T extends IEvent> void registerHandler(Class<? extends T> realParam, EventConsumer<T> handler) {
+		registerHandler(realParam, new EventHandlerIface<T>(handler));
+	}
+
 }

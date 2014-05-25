@@ -213,6 +213,14 @@ public class ZomisUtils {
 	public static String capitalize(String str) {
 		return substr(str, 0, 1).toUpperCase() + substr(str, 1).toLowerCase();
 	}
+	public static String capitalizeWords(String str) {
+		StringBuilder result = new StringBuilder(str.length());
+		String[] words = str.split(" ");
+		for (String s : words) {
+			result.append(capitalize(s));
+		}
+		return result.toString();
+	}
 	
 	public static int deckCombos(int cardsInDeck, int numCardTypes, int numOfEachType) {
 		if (cardsInDeck < 0)

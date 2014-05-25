@@ -12,6 +12,8 @@ public interface IEventExecutor {
 	void registerListener(EventListener listener);
 
 	void registerHandler(Class<? extends IEvent> realParam, IEventHandler handler);
+	
+	<T extends IEvent> void registerHandler(Class<? extends T> realParam, EventConsumer<T> handler);
 
 	void clearListeners();
 

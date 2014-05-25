@@ -13,6 +13,8 @@ import java.util.TreeSet;
 import net.zomis.custommap.CustomFacade;
 
 public class EventExecutor implements IEventExecutor {
+	// TODO: Thread-Safety: http://chat.stackexchange.com/transcript/message/15332362#15332362
+	
 	protected final Map<Class<? extends IEvent>, Collection<IEventHandler>> bindings;
 	private final Set<EventListener> registeredListeners;
 	
@@ -139,5 +141,10 @@ public class EventExecutor implements IEventExecutor {
 	@Deprecated
 	public Set<EventListener> getRegisteredListeners() {
 		return new HashSet<EventListener>(registeredListeners);
+	}
+
+	@Override
+	public <T extends IEvent> void registerHandler(Class<? extends T> realParam, EventConsumer<T> handler) {
+		registerHandler(realParam, new EventHandlerIface<T>(handler));
 	}
 }

@@ -28,13 +28,6 @@ public class CustomFacade implements EventListener {
 		return instance.getEventExecutor();
 	}
 	
-	@Deprecated
-	public static CustomFacade initializeIfNeeded(ZomisLog logger) {
-		if (instance == null)
-			instance = new CustomFacade(logger);
-		return instance;
-	}
-	
 	public IEventExecutor getEventExecutor() {
 		if (events == null)
 			events = createEvents();
@@ -75,6 +68,7 @@ public class CustomFacade implements EventListener {
         return instance;
     }
 
+    @Deprecated
 	public String getTag() {
 		return this.tag;
 	}
@@ -89,6 +83,7 @@ public class CustomFacade implements EventListener {
 		this.eventFactory = eventFactory;
 	}
     
+    @Deprecated
 	public CustomFacade setTag(String tag) {
 		this.tag = tag;
     	return this;
