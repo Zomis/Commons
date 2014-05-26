@@ -913,7 +913,8 @@ public class TwoDScrollView extends FrameLayout {
 	 * @param immediate True to scroll immediately without animation
 	 * @return true if scrolling was performed
 	 */
-	private boolean scrollToChildRect(Rect rect, boolean immediate) { // TODO testa med scrollToChildRect som public och använd för att scrolla till plats efter zoomning
+	private boolean scrollToChildRect(Rect rect, boolean immediate) {
+		// TODO Test with `scrollToChildRect` as public and use to scroll to specific place after zooming
 		final int delta = computeScrollDeltaToGetChildRectOnScreen(rect);
 		final boolean scroll = delta != 0;
 		if (scroll) {
