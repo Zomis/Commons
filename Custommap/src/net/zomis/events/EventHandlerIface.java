@@ -4,11 +4,17 @@ package net.zomis.events;
 public class EventHandlerIface<T extends IEvent> implements IEventHandler, EventListener, Comparable<IEventHandler> {
 
 	private final EventConsumer<T> consumer;
+	private final int priority;
 
 	public EventHandlerIface(EventConsumer<T> consumer) {
-		this.consumer = consumer;
+		this(consumer, Event.DEFAULT_PRIORITY);
 	}
 	
+	public EventHandlerIface(EventConsumer<T> handler, int priority) {
+		this.consumer = handler;
+		this.priority = priority;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public final void execute(IEvent event) {
@@ -21,7 +27,7 @@ public class EventHandlerIface<T extends IEvent> implements IEventHandler, Event
 
 	@Override
 	public int getPriority() {
-		return Event.DEFAULT_PRIORITY;
+		return this.priority;
 	}
 	
 	@Override
@@ -30,8 +36,16 @@ public class EventHandlerIface<T extends IEvent> implements IEventHandler, Event
 	}
 	
 	@Override
-	public int compareTo(IEventHandler arg0) {
-		return this.hashCode() - arg0.hashCode();
+	public int compareTo(IEventHandler other) {
+		// Because we are using a TreeSet to store EventHandlers in, compareTo should never return "equal".
+		int compare = 0;
+		if (compare == 0)
+			compare = this.getPriority() - other.getPriority();
+		if (compare == 0) 
+			compare = this.getListener().hashCode() - other.getListener().hashCode();
+		if (compare == 0)
+			compare = this.hashCode() - other.hashCode();
+		return compare;
 	}
 	
 }

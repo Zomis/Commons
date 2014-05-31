@@ -3,8 +3,10 @@ package net.zomis.events;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import net.zomis.custommap.CustomFacade;
 
@@ -55,10 +57,14 @@ public class EventExecutorGWT implements IEventExecutor {
 			this.bindings.put(realParam, new TreeSet<IEventHandler>(new Comparator<IEventHandler>() {
 				@Override
 				public int compare(IEventHandler a, IEventHandler b) {
-					int compareResult = a.getPriority() - b.getPriority();
-					if (compareResult == 0) 
-						compareResult = a.hashCode() - b.hashCode();
-					return compareResult;
+					int compare = 0;
+					if (compare == 0)
+						compare = a.getPriority() - b.getPriority();
+					if (compare == 0) 
+						compare = a.getListener().hashCode() - b.getListener().hashCode();
+					if (compare == 0)
+						compare = a.hashCode() - b.hashCode();
+					return compare;
 				}
 			}));
 		}
@@ -73,8 +79,20 @@ public class EventExecutorGWT implements IEventExecutor {
 	}
 
 	@Override
+	public void removeHandler(IEventHandler listener) {
+		for (Entry<Class<? extends IEvent>, Collection<IEventHandler>> ee : bindings.entrySet()) {
+			Iterator<IEventHandler> it = ee.getValue().iterator();
+			while (it.hasNext()) {
+				IEventHandler curr = it.next();
+				if (curr == listener)
+					it.remove();
+			}
+		}
+	}
+	
+	@Override
 	public void removeListener(EventListener listener) {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException(); 
 	}
 
 	@Override
@@ -83,8 +101,17 @@ public class EventExecutorGWT implements IEventExecutor {
 	}
 
 	@Override
-	public <T extends IEvent> void registerHandler(Class<? extends T> realParam, EventConsumer<T> handler) {
-		registerHandler(realParam, new EventHandlerIface<T>(handler));
+	public <T extends IEvent> IEventHandler registerHandler(Class<? extends T> realParam, EventConsumer<T> handler) {
+		EventHandlerIface<T> listener = new EventHandlerIface<T>(handler);
+		registerHandler(realParam, listener);
+		return listener;
+	}
+
+	@Override
+	public <T extends IEvent> IEventHandler registerHandler(Class<? extends T> realParam, EventConsumer<T> handler, int priority) {
+		EventHandlerIface<T> listener = new EventHandlerIface<T>(handler, priority);
+		registerHandler(realParam, listener);
+		return listener;
 	}
 
 }

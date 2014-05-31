@@ -58,8 +58,8 @@ public class EventHandler implements IEventHandler {
 		int compare = 0;
 		if (compare == 0)
 			compare = this.getPriority() - other.getPriority();
-		if (compare == 0 && other instanceof EventHandler) 
-			compare = this.listener.hashCode() - ((EventHandler)other).listener.hashCode();
+		if (compare == 0) 
+			compare = this.getListener().hashCode() - other.getListener().hashCode();
 		if (compare == 0)
 			compare = this.hashCode() - other.hashCode();
 		return compare;

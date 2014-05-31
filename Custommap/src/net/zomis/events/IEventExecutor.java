@@ -13,13 +13,16 @@ public interface IEventExecutor {
 
 	void registerHandler(Class<? extends IEvent> realParam, IEventHandler handler);
 	
-	<T extends IEvent> void registerHandler(Class<? extends T> realParam, EventConsumer<T> handler);
+	<T extends IEvent> IEventHandler registerHandler(Class<? extends T> realParam, EventConsumer<T> handler);
 
+	<T extends IEvent> IEventHandler registerHandler(Class<? extends T> realParam, EventConsumer<T> handler, int priority);
+	
 	void clearListeners();
 
 	void removeListener(EventListener listener);
 
 	boolean containsListener(EventListener listener);
 
+	void removeHandler(IEventHandler listener);
 	
 }

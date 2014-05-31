@@ -31,8 +31,16 @@ public abstract class EventHandlerGWT<T extends IEvent> implements IEventHandler
 	}
 	
 	@Override
-	public int compareTo(IEventHandler arg0) {
-		return this.hashCode() - arg0.hashCode();
+	public int compareTo(IEventHandler other) {
+		// Because we are using a TreeSet to store EventHandlers in, compareTo should never return "equal".
+		int compare = 0;
+		if (compare == 0)
+			compare = this.getPriority() - other.getPriority();
+		if (compare == 0) 
+			compare = this.getListener().hashCode() - other.getListener().hashCode();
+		if (compare == 0)
+			compare = this.hashCode() - other.hashCode();
+		return compare;
 	}
 	
 }

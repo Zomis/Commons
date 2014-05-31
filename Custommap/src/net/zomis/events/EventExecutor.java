@@ -144,7 +144,29 @@ public class EventExecutor implements IEventExecutor {
 	}
 
 	@Override
-	public <T extends IEvent> void registerHandler(Class<? extends T> realParam, EventConsumer<T> handler) {
-		registerHandler(realParam, new EventHandlerIface<T>(handler));
+	public <T extends IEvent> IEventHandler registerHandler(Class<? extends T> realParam, EventConsumer<T> handler) {
+		EventHandlerIface<T> ieh = new EventHandlerIface<T>(handler);
+		registerHandler(realParam, ieh);
+		return ieh;
+	}
+
+	@Override
+	public <T extends IEvent> IEventHandler registerHandler(Class<? extends T> realParam, EventConsumer<T> handler, int priority) {
+		EventHandlerIface<T> ieh = new EventHandlerIface<T>(handler, priority);
+		registerHandler(realParam, ieh);
+		return ieh;
+	}
+
+	@Override
+	public void removeHandler(IEventHandler listener) {
+		for (Entry<Class<? extends IEvent>, Collection<IEventHandler>> ee : bindings.entrySet()) {
+			Iterator<IEventHandler> it = ee.getValue().iterator();
+			while (it.hasNext()) {
+				IEventHandler curr = it.next();
+				if (curr == listener)
+					it.remove();
+			}
+		}
+		this.registeredListeners.remove(listener);
 	}
 }

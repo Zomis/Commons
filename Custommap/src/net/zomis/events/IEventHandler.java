@@ -7,5 +7,5 @@ public interface IEventHandler extends Comparable<IEventHandler> {
 	int getPriority();
 
 	EventListener getListener();
-
+	
 }
