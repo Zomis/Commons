@@ -1,7 +1,7 @@
 package net.zomis.custommap.view.android;
 
 import net.zomis.custommap.CustomFacade;
-import net.zomis.custommap.view.CustommapLayoutReadyEvent;
+import net.zomis.custommap.view.android.events.CustommapLayoutReadyEvent;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;

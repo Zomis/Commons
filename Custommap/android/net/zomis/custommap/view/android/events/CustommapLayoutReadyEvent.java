@@ -1,4 +1,4 @@
-package net.zomis.custommap.view;
+package net.zomis.custommap.view.android.events;
 
 import net.zomis.custommap.view.android.NonLayoutingLayout;
 import net.zomis.events.IEvent;
