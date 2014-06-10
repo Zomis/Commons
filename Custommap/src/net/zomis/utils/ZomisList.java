@@ -14,12 +14,9 @@ import java.util.RandomAccess;
 import java.util.SortedSet;
 import java.util.TreeSet;
 /**
- * Provides convenience-Methods for ArrayLists, such as filter and getRandom
+ * Contains convenience-Methods for various collections
+ * 
  * @author Zomis
- *
- * @param <E>
- * @see #filter(FilterInterface)
- * @see #getRandom()
  */
 public class ZomisList {
 	private static final int	SHUFFLE_THRESHOLD	= 5;
@@ -55,9 +52,13 @@ public class ZomisList {
 		
 		return result;
 	}
+	
+	@Deprecated
 	public static interface ConversionInterface<E, F> {
 		F convert(E e);
 	}
+	
+	@Deprecated
 	public static <E, F> ArrayList<F> convert(List<E> list, ConversionInterface<E, F> conversion) {
 		ArrayList<F> alist = new ArrayList<F>(list.size());
 		for (E e : list) {
@@ -69,58 +70,68 @@ public class ZomisList {
 	public static <E> E getRandom(List<E> list) {
 		return getRandom(list, random);
 	}
+	
 	public static <E> E getRandom(List<E> list, Random random) {
 		if (list.isEmpty()) return null;
 		if (random == null) random = ZomisList.random;
 		return list.get(random.nextInt(list.size()));
 	}
-
 	
 	public static <E> E getRandom(E[] list) {
 		return getRandom(list, random);
 	}
+	
 	public static <E> E getRandom(E[] list, Random random) {
 		if (list.length == 0) return null;
 		if (random == null) random = ZomisList.random;
 		return list[random.nextInt(list.length)];
 	}
 	
-	public static <E> void filter(Collection<E> list, FilterInterface<? super E> filter) {
-		Iterator<E> it = list.iterator();
+	/**
+	 * Remove all items in a collection not matching the specified filter.
+	 * 
+	 * @param collection
+	 * @param filter
+	 */
+	public static <E> void filter(Collection<E> collection, FilterInterface<? super E> filter) {
+		Iterator<E> it = collection.iterator();
 		while (it.hasNext()) {
 			E i = it.next();
 			if (!filter.shouldKeep(i)) it.remove();
 		}
 	}
+	
+	/**
+	 * Deprecated because of confusing name, use {@link #copyAndFilter(Collection, FilterInterface)}
+	 */
+	@Deprecated
 	public static <E> LinkedList<E> filter2(Collection<E> list, FilterInterface<? super E> filter) {
 		LinkedList<E> list2 = new LinkedList<E>(list);
 		filter(list2, filter);
 		return list2;
 	}
-	public static <E> List<E> getAll(Iterable<E> list, FilterInterface<? super E> filter) {
-		// TODO: Not much difference between ZomisList.filter2 and ZomisList.getAll. Merge them.
-		List<E> result = new LinkedList<E>();
-		for (E e : list)
+	
+	/**
+	 * Retrieve all values in a collection that match a filter
+	 * 
+	 * @param collection The collection to filter
+	 * @param filter The filter to apply
+	 * @return A copy of the collection
+	 */
+	public static <E> List<E> getAll(Iterable<E> collection, FilterInterface<? super E> filter) {
+		List<E> result = new ArrayList<E>();
+		for (E e : collection)
 			if (filter.shouldKeep(e)) result.add(e);
 		return result;
 	}
+	
 	@Deprecated
 	public static <E> boolean contains(Iterable<E> list, FilterInterface<E> filter) {
 		return !getAll(list, filter).isEmpty();
 	}
+	
 	public static <E> int getSize(Iterable<E> list, FilterInterface<E> filter) {
 		return getAll(list, filter).size();
-	}
-	
-	@Deprecated
-	public static interface LogInterface {
-		public void log(String string);
-	}
-	
-	@Deprecated
-	public static <E> void logArray(Iterable<E> list, LogInterface logFunction) {
-		for (E e : list)
-			logFunction.log(e == null ? "null" : e.toString());
 	}
 	
 	public static interface GetKeyInterface<Element, Key> {

@@ -8,8 +8,8 @@ import net.zomis.interfaces.HasPos;
 public enum Direction8 {
 	W(-1, 0), NW(-1, -1), N(0, -1), NE(1, -1), E(1, 0), SE(1, 1), S(0, 1), SW(-1, 1);
 	// TODO: Complete Direction8 enum
-	private int	dx;
-	private int	dy;
+	private final int dx;
+	private final int dy;
 
 	private Direction8(int dx, int dy) {
 		this.dx = dx;

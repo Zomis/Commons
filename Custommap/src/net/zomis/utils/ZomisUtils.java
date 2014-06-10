@@ -33,11 +33,13 @@ public class ZomisUtils {
 		
 		return str.substring(index, length);
 	}
+	
 	public static String substr(final String str, final int index) {
 		if (index >= 0)
 			return substr(str, index, str.length() - index);
 		else return substr(str, index, -index);
 	}
+	
 	public static String implode(String string, String[] arr) {
 		if (arr == null) 
 			return null;
@@ -63,12 +65,15 @@ public class ZomisUtils {
 		return ret;
 	}
 	
+	@Deprecated
 	public static String echo(Object obj) {
 		String str = String.valueOf(obj);
 		if (CustomFacade.isInitialized()) CustomFacade.getLog().i(str);
 		else System.out.println(str);
 		return str;
 	}
+	
+	@Deprecated
 	public static String dechex(int decimal) {
 		return Integer.toString(decimal, 16);
 	}
@@ -217,6 +222,8 @@ public class ZomisUtils {
 		StringBuilder result = new StringBuilder(str.length());
 		String[] words = str.split(" ");
 		for (String s : words) {
+			if (result.length() > 0)
+				result.append(" ");
 			result.append(capitalize(s));
 		}
 		return result.toString();
