@@ -112,6 +112,15 @@ public class ZomisUtils {
 	public static double NNKKnoDiv(int N, int n, int K, int k) {
 		return nCr(K, k) * nCr(N - K, n - k);
 	}
+	
+	public static double[] NNKKdistribution(int N, int n, int K) {
+		double[] nnkkArray = new double[K + 1];
+		for (int i = 0; i <= K; i++) {
+			nnkkArray[i] = ZomisUtils.NNKKwithDiv(N, n, K, i);
+		}
+		return nnkkArray;
+	}
+	
 	public static double NNKKwithDiv(int N, int n, int K, int k) {
 		return NNKKnoDiv(N, n, K, k) / nCr(N, n);
 	}

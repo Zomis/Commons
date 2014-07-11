@@ -89,6 +89,8 @@ public class ZomisUtils2 {
 				(bar[i + 2] & 255L) << 24 | (bar[i + 3] & 255L) << 16 |
 				(bar[i + 4] & 255L) << 8 | (bar[i + 5] & 255L)) ^ 0x5DEECE66DL;
 	}
+	
+	@Deprecated
 	public static <T> T objAs(Object object, Class<T> to) {
 		if (object == null) return null;
 		
