@@ -19,8 +19,19 @@ public abstract class Replay<T, M> {
 	}
 	
 	public void addMove(M move) {
-		if (moves.length() > 0)
+		if (moves.length() > 0) {
 			moves.append(moveSep);
+		}
+		moves.append(getMoveData(move));
+	}
+	
+	public void addMove(M move, int moveOption) {
+		// TODO: Support moveOption in Replays - especially in `getMoveData`
+		if (moves.length() > 0) {
+			moves.append(moveSep);
+		}
+		moves.append(moveOption);
+		moves.append(':');
 		moves.append(getMoveData(move));
 	}
 	

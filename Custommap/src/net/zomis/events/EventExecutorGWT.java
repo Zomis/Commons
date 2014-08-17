@@ -54,23 +54,27 @@ public class EventExecutorGWT implements IEventExecutor {
 	@Override
 	public void registerHandler(Class<? extends IEvent> realParam, IEventHandler handler) {
 		if (!this.bindings.containsKey(realParam)) {
-			this.bindings.put(realParam, new TreeSet<IEventHandler>(new Comparator<IEventHandler>() {
-				@Override
-				public int compare(IEventHandler a, IEventHandler b) {
-					int compare = 0;
-					if (compare == 0)
-						compare = a.getPriority() - b.getPriority();
-					if (compare == 0) 
-						compare = a.getListener().hashCode() - b.getListener().hashCode();
-					if (compare == 0)
-						compare = a.hashCode() - b.hashCode();
-					return compare;
-				}
-			}));
+			this.bindings.put(realParam, createCollection());
 		}
 		Collection<IEventHandler> eventHandlersForEvent = this.bindings.get(realParam);
 		CustomFacade.getLog().v("Add handler: " + handler + " for event " + realParam.getSimpleName());
 		eventHandlersForEvent.add(handler);
+	}
+
+	protected Collection<IEventHandler> createCollection() {
+		return new TreeSet<IEventHandler>(new Comparator<IEventHandler>() {
+			@Override
+			public int compare(IEventHandler a, IEventHandler b) {
+				int compare = 0;
+				if (compare == 0)
+					compare = a.getPriority() - b.getPriority();
+				if (compare == 0) 
+					compare = a.getListener().hashCode() - b.getListener().hashCode();
+				if (compare == 0)
+					compare = a.hashCode() - b.hashCode();
+				return compare;
+			}
+		});
 	}
 
 	@Override
