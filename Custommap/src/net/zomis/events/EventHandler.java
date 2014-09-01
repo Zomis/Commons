@@ -19,11 +19,11 @@ public class EventHandler implements IEventHandler {
 		this(listener, method, annotation, null);
 	}
 	
-	public EventHandler(EventListener listener, Method method, Event annotation, Boolean b) {
+	public EventHandler(EventListener listener, Method method, Event annotation, Boolean propagateExceptions) {
 		this.listener = listener;
 		this.method = method;
 		this.annotation = annotation;
-		this.propagateExceptions = b == null ? annotation.propagateExceptions() : b;
+		this.propagateExceptions = propagateExceptions == null ? annotation.propagateExceptions() : propagateExceptions;
 	}
 
 	@Override
