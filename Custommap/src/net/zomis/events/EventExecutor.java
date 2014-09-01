@@ -40,9 +40,6 @@ public class EventExecutor implements IEventExecutor {
 	
 	@Override
 	public <T extends IEvent> T executeEvent(T event, int i) {
-//		if (this != CustomFacade.getGlobalEvents())		// TODO: Why am I executing events on both global and local EventExecutor?
-//			CustomFacade.getGlobalEvents().executeEvent(event);
-		
 		Collection<IEventHandler> handlers = this.bindings.get(event.getClass());
 		if (handlers == null) {
 			if (this.debug)
@@ -106,7 +103,7 @@ public class EventExecutor implements IEventExecutor {
 		eventHandlersForEvent.add(handler);
 	}
 
-	private EventHandler createEventHandler(final EventListener listener, final Method method, final Event annotation) {
+	protected EventHandler createEventHandler(final EventListener listener, final Method method, final Event annotation) {
 		return new EventHandler(listener, method, annotation);
 	}
 

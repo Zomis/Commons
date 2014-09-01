@@ -9,17 +9,23 @@ public class EventHandler implements IEventHandler {
 	private final EventListener	listener;
 	private final Method method;
 	private final Event	annotation;
+	private final boolean propagateExceptions;
 	
 	protected EventHandler() {
 		this(null, null, null);
 	}
 	
 	public EventHandler(EventListener listener, Method method, Event annotation) {
+		this(listener, method, annotation, null);
+	}
+	
+	public EventHandler(EventListener listener, Method method, Event annotation, Boolean b) {
 		this.listener = listener;
 		this.method = method;
 		this.annotation = annotation;
+		this.propagateExceptions = b == null ? annotation.propagateExceptions() : b;
 	}
-	
+
 	@Override
 	public EventListener getListener() {
 		return listener;
@@ -35,7 +41,7 @@ public class EventHandler implements IEventHandler {
 			throw new RuntimeException(errorString(event), e1);
 		} catch (InvocationTargetException e1) {
 			CustomFacade.getLog().e(errorString(event), e1.getCause());
-			if (annotation.propagateExceptions())
+			if (propagateExceptions)
 				throw new EventException(errorString(event), e1.getCause());
 		} 
 	}
