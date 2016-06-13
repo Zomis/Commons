@@ -1,6 +1,7 @@
 stage 'Snapshot'
 node {
     checkout scm
+    sh 'cd Custommap'
     sh 'mvn compile'
     // dir('target') {stash name: 'war', includes: 'x.war'}
 }
