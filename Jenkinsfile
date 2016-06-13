@@ -6,8 +6,8 @@ node {
 }
 
 stage name: 'Release', concurrency: 1
-input parameters: [new StringParameterDefinition('release_version', '0.0.0'), 
-	new StringParameterDefinition('next_version', '0.0.0-SNAPSHOT')]
+input parameters: [[$class: 'StringParameterDefinition', name: 'release_version', defaultValue: '0.0.0'], 
+	[$class: 'StringParameterDefinition', name: 'next_version', defaultValue: '0.0.0-SNAPSHOT']]
 node {
     checkout scm
     sh "echo Release version ${release_version}"
