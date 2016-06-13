@@ -5,7 +5,7 @@ node {
     // dir('target') {stash name: 'war', includes: 'x.war'}
 }
 
-stage 'Release', concurrency: 1
+stage name: 'Release', concurrency: 1
 input parameters: [new StringParameterDefinition('release_version', '0.0.0'), 
 	new StringParameterDefinition('next_version', '0.0.0-SNAPSHOT')]
 node {
