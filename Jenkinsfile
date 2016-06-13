@@ -10,8 +10,8 @@ def buildParams = input parameters: [[$class: 'StringParameterDefinition', name:
 	[$class: 'StringParameterDefinition', name: 'next_version', defaultValue: '0.0.0-SNAPSHOT']]
 node {
     checkout scm
-    def release_version = buildParams['release_version']
-    def next_version = buildParams['next_version']
+    def releaseVersion = buildParams['release_version']
+    def nextVersion = buildParams['next_version']
     sh "echo Release version ${releaseVersion}"
     sh "echo Snapshot version ${nextVersion}"
     // sh 'mvn clean release'
