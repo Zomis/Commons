@@ -15,7 +15,7 @@
 	
 	<scm>
 		<url>https://github.com/Zomis/Commons</url>
-		<connection>scm:git:git://github.com/Zomis/Commons.git</connection>
+		<connection>scm:git:git@github.com:Zomis/Commons.git</connection>
 		<developerConnection>scm:git:git@github.com:Zomis/Commons.git</developerConnection>
 	</scm>
 
