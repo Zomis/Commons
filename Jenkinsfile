@@ -2,6 +2,7 @@ node {
     stage 'Snapshot'
     checkout scm
     sh 'mvn compile'
+    sh "git checkout jenkins"
 
     stage name: 'Release', concurrency: 1
     def buildParams = input parameters: [[$class: 'StringParameterDefinition', name: 'release_version', defaultValue: '0.0.0'], 
