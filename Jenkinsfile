@@ -10,6 +10,6 @@ node {
     def nextVersion = buildParams['next_version']
     sh "echo Release version ${releaseVersion}"
     sh "echo Snapshot version ${nextVersion}"
-    sh "cd Custommap && mvn --batch-mode -Dtag=${releaseVersion} release:perform -DreleaseVersion=${releaseVersion} -DdevelopmentVersion=${nextVersion}"
+    sh "cd Custommap && mvn --batch-mode -Dtag=${releaseVersion} release:prepare release:perform -DreleaseVersion=${releaseVersion} -DdevelopmentVersion=${nextVersion}"
     // sh 'mvn clean release'
 }
