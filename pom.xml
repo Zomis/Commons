@@ -17,7 +17,6 @@
 		<url>http://github.com/Zomis/Commons</url>
 		<connection>scm:git:git://github.com/Zomis/Commons.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/Zomis/Commons.git</developerConnection>
-		<tag>HEAD</tag>
 	</scm>
 
 	<distributionManagement>
