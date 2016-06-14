@@ -14,5 +14,6 @@ node {
     def nextVersion = buildParams['next_version']
     sh "echo Release version ${releaseVersion}"
     sh "echo Snapshot version ${nextVersion}"
+    sh "mvn -DdryRun=true --batch-mode -Dtag=${releaseVersion} release:prepare -DreleaseVersion=${releaseVersion} -DdevelopmentVersion=${nextVersion}"
     // sh 'mvn clean release'
 }
