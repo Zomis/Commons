@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.zomis</groupId>
 	<artifactId>commons</artifactId>
-	<version>0.2.3</version>
+	<version>0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	
 	<properties>
@@ -16,7 +16,7 @@
 		<url>http://github.com/Zomis/Commons</url>
 		<connection>scm:git:git://github.com/Zomis/Commons.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/Zomis/Commons.git</developerConnection>
-	  <tag>0.2.3</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<distributionManagement>
